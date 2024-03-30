@@ -1,13 +1,14 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
-import RecentSliderItem from "./RecentSliderItem";
+import NewReleasesSwiperItem from "./NewReleasesSwiperItem";
 import { useQuery } from "react-query";
 import { getNews } from "@/lib/api/news";
 import { AppLoader } from "@/components/atoms/AppLoader";
+import { SLASH_REPLACE } from "@/lib/constants";
 
-export default function RecentViewSwiper() {
+export default function NewReleasesSwiper() {
   const newQuery = useQuery({
     queryKey: ["news"],
     queryFn: getNews,
@@ -23,23 +24,25 @@ export default function RecentViewSwiper() {
         showsHorizontalScrollIndicator={false}
         estimatedItemSize={300}
         ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
-        renderItem={({item}) => (
-          <RecentSliderItem
-            title={item.title}
-            image={item.thumbnail}
-            episode={2}
-            onPress={() => {}}
+        renderItem={({ item }) => (
+          <NewReleasesSwiperItem
+            data={item}
+            onPress={() =>
+              router.push(`/news/${item.id.replaceAll("/", SLASH_REPLACE)}`)
+            }
           />
         )}
       />
     );
   }
-  return null
   return (
     <View style={{ paddingHorizontal: 10 }}>
-      <Text role="heading" className="text-xl tracking-tighter">
-        Continue watching
-      </Text>
+      <View className="flex flex-row items-center justify-between">
+        <Text role="heading" className="text-xl tracking-tighter">
+          New releases
+        </Text>
+        <Link className="text-violet-500" href="/news">More</Link>
+      </View>
 
       <ContentWithLoader />
     </View>

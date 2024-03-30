@@ -15,15 +15,15 @@ export default function RecentSliderItem({
   episode,
 }: TProps) {
   return (
-    <TouchableOpacity style={{ width: 250 }} onPress={onPress}>
+    <TouchableOpacity   onPress={onPress}>
       <Image
         source={{
           uri: image,
         }}
         style={{
-          width: 250,
-          height: 200,
-          borderRadius: 15,
+          width: 300,
+          height: 150,
+          // borderRadius: 15,
           objectFit: "cover",
         }}
       />

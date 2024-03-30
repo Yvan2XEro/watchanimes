@@ -1,0 +1,1 @@
+export { default as  NewReleasesSwiper } from "./NewReleasesSwiper"
