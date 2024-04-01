@@ -1,24 +1,19 @@
-import { API2_URL, API_URL } from "../constants";
-import {
-  Anime,
-  AnimeInfo,
-  AnimesServer,
-  Paginated,
-  TopAiring,
-} from "../types/entities";
+import { API2_URL } from "../constants";
+import { Anime, AnimeInfo, AnimesServer, Paginated, TopAiring } from "../types/entities";
+import { Anime2 } from "../types/entities2";
 
 type TProps = {
   server?: AnimesServer;
   page?: number;
 };
-export async function getTopAiring({ server = "gogoanime", page = 1 }: TProps) {
+export async function getTopAiring2({  page = 1 }: TProps) {
   try {
     const response = await fetch(
-      `${API_URL}/${server}/top-airing?page=${page}`
+      `${API2_URL}/top-airing?page=${page}`
     );
     const data = await response.json();
     if (response.ok) {
-      return data as Paginated<TopAiring>;
+      return data as Anime2[];
     }
     return Promise.reject(data);
   } catch (error) {
@@ -26,10 +21,26 @@ export async function getTopAiring({ server = "gogoanime", page = 1 }: TProps) {
   }
 }
 
-export async function getAnimesByGenre({
+
+export async function getRecentRelease2({  page = 1 }: TProps) {
+  try {
+    const response = await fetch(
+      `${API2_URL}/recent-release?page=${page}`
+    );
+    const data = await response.json();
+    if (response.ok) {
+      return data as Anime2[];
+    }
+    return Promise.reject(data);
+  } catch (error) {
+    return Promise.reject(error);
+  }
+}
+
+export async function getAnimesByGenre2({
   genre,
   page,
-  server = "gogoanime",
+  
 }: {
   genre: string;
   page: number;
@@ -37,7 +48,7 @@ export async function getAnimesByGenre({
 }) {
   try {
     const response = await fetch(
-      `${API_URL}/anime/${server}/genre/${genre}?page=${page}`
+      `${API2_URL}/genre/${genre}?page=${page}`
     );
     const data = await response.json();
     if (response.ok) {
@@ -49,16 +60,16 @@ export async function getAnimesByGenre({
   }
 }
 
-export async function getMovies({
+export async function getMovies2({
   page,
-  server = "gogoanime",
+  
 }: {
   page: number;
   server?: AnimesServer;
 }) {
   try {
     const response = await fetch(
-      `${API_URL}/anime/${server}/movies?page=${page}`
+      `${API2_URL}/movies?page=${page}`
     );
     const data = await response.json();
     if (response.ok) {
@@ -70,16 +81,16 @@ export async function getMovies({
   }
 }
 
-export async function getPopular({
+export async function getPopular2({
   page,
-  server = "gogoanime",
+  
 }: {
   page: number;
   server?: AnimesServer;
 }) {
   try {
     const response = await fetch(
-      `${API_URL}/anime/${server}/popular?page=${page}`
+      `${API2_URL}/popular?page=${page}`
     );
     const data = await response.json();
     if (response.ok) {
@@ -91,35 +102,15 @@ export async function getPopular({
   }
 }
 
-export async function getANimeInfos({ id }: { id: string }) {
-  try {
-    const response = await fetch(`${API2_URL}/anime-details/${id}`);
-    const data = await response.json();
-    if (response.ok) {
-      return data as AnimeInfo;
-    }
-  } catch (error) {}
-}
 
-export async function searchAnimes({
-  q,
-  page,
-  server = "gogoanime",
-}: {
-  q: string;
-  page: number;
-  server?: AnimesServer;
-}) {
+export async function getANimeInfos2({id}: { id: string}) {
   try {
-    const response = await fetch(
-      `${API_URL}/anime/${server}/${q}?page=${page}`
-    );
-    const data = await response.json();
-    if (response.ok) {
-      return data as Paginated<Anime>;
+    const response = await fetch(`${API2_URL}/anime-details/${id}`)
+    const data = await response.json()
+    if(response.ok) {
+      return data as Anime2
     }
-    return Promise.reject(data);
   } catch (error) {
-    return Promise.reject(error);
+    
   }
 }

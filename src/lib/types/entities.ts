@@ -63,3 +63,28 @@ export type Anime = {
   image: string;
   url: string;
 };
+
+export type Episode = {
+  id: string;
+  number: 0;
+  url: string;
+};
+
+export type AnimeInfo = {
+  animeTitle: string;
+  type: string;
+  releasedDate: string;
+  status: string;
+  genres: string[];
+  otherNames: string;
+  synopsis: string;
+  animeImg: string;
+  episodesAvaliable: string;
+  episodesList: [
+    {
+      episodeId: string;
+      episodeNum: string;
+      episodeUrl: string;
+    }
+  ];
+};

@@ -65,20 +65,21 @@ export default function Layout() {
 
 function AppTabBarIcon({ color, focused, iconName, label }) {
   return (
-    <View className="flex flex-col items-center">
+    <View className="flex flex-col items-center flex-1">
       <View
       className={`${focused ? "bg-violet-600": ""}`}
         style={{
           padding: 3,
           paddingHorizontal: 15,
           borderRadius: 15,
+          width: 50,
           alignItems: "center",
           justifyContent: "center",
         }}
       >
         <AntDesign name={iconName} size={20} color={focused?"#fff": "#000"} />
       </View>
-      {<Text style={{ fontSize: 12, color }}>{label}</Text>}
+      {<Text style={{ fontSize: 12, color, flex: 1 }}>{label}</Text>}
     </View>
   );
 }

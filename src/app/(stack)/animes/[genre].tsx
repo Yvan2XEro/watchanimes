@@ -1,15 +1,20 @@
-import { View, Text, Image, FlatList, Dimensions } from "react-native";
+import {
+  View,
+  FlatList,
+  Dimensions,
+} from "react-native";
 import React, { useLayoutEffect } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import { SLASH_REPLACE } from "@/lib/constants";
+import {
+  SLASH_REPLACE,
+} from "@/lib/constants";
 import { Anime } from "@/lib/types/entities";
 import { useInfiniteQuery } from "react-query";
 import { getAnimesByGenre } from "@/lib/api/animes";
-import { FlashList } from "@shopify/flash-list";
 import { AppLoader } from "@/components/atoms/AppLoader";
-import { substring } from "@/lib/string";
+import { Item, ItemSkeleton } from "@/components/organisms/AnimeSection";
 
-const {width} = Dimensions.get("window")
+const { width } = Dimensions.get("window");
 export default function animesIindex() {
   const navigation = useNavigation();
   const { genre } = useLocalSearchParams<{ genre: string }>();
@@ -42,19 +47,43 @@ export default function animesIindex() {
     });
   }, []);
 
+  if (isLoading)
+    return (
+      <View className="flex-1 px-3">
+        <FlatList
+          data={Array.from({ length: 20 })}
+          renderItem={() => <ItemSkeleton />}
+          refreshing={isRefetching}
+          numColumns={Math.round(width / 180)}
+          ItemSeparatorComponent={() => <View className="h-1" />}
+          contentContainerStyle={{
+            alignItems: "center",
+          }}
+          onRefresh={async () => await refetch()}
+          ListFooterComponent={isFetchingNextPage ? <AppLoader /> : null}
+          keyExtractor={(item, index) => index + ""}
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
+            }
+          }}
+        />
+      </View>
+    );
+
   return (
-    <View className="flex-1">
+    <View className="flex-1 px-3">
       <FlatList<Anime>
         data={data?.pages.flatMap((page) => page.results)}
-        renderItem={(props)=><Item {...props} />}
-        refreshing={isRefetching}
-        numColumns={Math.round(width/180)}
-        ItemSeparatorComponent={()=><View className="h-1" />}
+        renderItem={(props) => <Item {...props} />}
+        refreshing={isRefetching && !isFetchingNextPage}
+        numColumns={Math.round(width / 180)}
+        ItemSeparatorComponent={() => <View className="h-1" />}
         contentContainerStyle={{
-          alignItems: "center"
+          alignItems: "center",
         }}
         onRefresh={async () => await refetch()}
-        ListFooterComponent={<AppLoader />}
+        ListFooterComponent={isFetchingNextPage && <AppLoader />}
         keyExtractor={(item, index) => index + item.id}
         onEndReached={() => {
           if (hasNextPage && !isFetchingNextPage) {
@@ -65,19 +94,4 @@ export default function animesIindex() {
     </View>
   );
 }
-const Item = React.memo(({ item }: { item: Anime }) => (
-  <View>
-    <Image
-      source={{ uri: item.image }}
-      style={{
-        width: 175,
-        height: 247,
-      }}
-    />
-    {/* 
-    150=>212
-    175=>x
-    */}
-    <Text>{substring(item.title, 25)}</Text>
-  </View>
-));
+

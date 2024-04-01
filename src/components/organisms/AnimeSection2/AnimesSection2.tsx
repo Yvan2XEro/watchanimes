@@ -2,20 +2,20 @@ import { View, Text } from "react-native";
 import React, { ReactNode } from "react";
 import { Link, router } from "expo-router";
 import { FlashList } from "@shopify/flash-list";
-import { AnimeItem, AnimeItemSkeleton } from "./AnimeItem";
+import { AnimeItem2, AnimeItemSkeleton } from "./AnimeItem2";
 import { useQuery } from "react-query";
 import { AppLoader } from "@/components/atoms/AppLoader";
 import { SLASH_REPLACE } from "@/lib/constants";
-import { Anime, Paginated } from "@/lib/types/entities";
 import { argsToMultiparams } from "@/lib/string";
+import { Anime2 } from "@/lib/types/entities2";
 
 type TProps = {
   genre?: string;
   title: string;
   right?: ReactNode;
-  fetchData: () => Promise<Paginated<Anime>>;
+  fetchData: () => Promise<Anime2[]>;
 };
-export default function AnimesSection({
+export default function AnimesSection2({
   fetchData,
   genre,
   title,
@@ -44,12 +44,12 @@ export default function AnimesSection({
     return (
       <FlashList
         horizontal
-        data={animesQuery.data?.results}
+        data={animesQuery.data}
         showsHorizontalScrollIndicator={false}
         estimatedItemSize={150}
         ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
         renderItem={({ item }) => (
-          <AnimeItem data={item} onPress={() => router.push(`/animes/details/${argsToMultiparams(item.id, item.image, item.title)}`)} />
+          <AnimeItem2 data={item} onPress={() => router.push(`/animes/details/${argsToMultiparams(item.animeId, item.animeImg, item.animeTitle)}`)} />
         )}
       />
     );
