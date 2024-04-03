@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router/tabs";
-import { AntDesign } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Text, View } from "react-native";
 import { AppProviders } from "@/contexts";
 
@@ -21,7 +21,7 @@ export default function Layout() {
                 <AppTabBarIcon
                   color={color}
                   focused={focused}
-                  iconName="home"
+                  iconName="home-outline"
                   label="Home"
                 />
               );
@@ -36,7 +36,7 @@ export default function Layout() {
                 <AppTabBarIcon
                   color={color}
                   focused={focused}
-                  iconName="clockcircleo"
+                  iconName="time-outline"
                   label="Recents"
                 />
               );
@@ -51,7 +51,7 @@ export default function Layout() {
                 <AppTabBarIcon
                   color={color}
                   focused={focused}
-                  iconName="heart"
+                  iconName="heart-outline"
                   label="Favourites"
                 />
               );
@@ -65,7 +65,7 @@ export default function Layout() {
 
 function AppTabBarIcon({ color, focused, iconName, label }) {
   return (
-    <View className="flex flex-col items-center flex-1">
+    <View className="flex flex-col items-center flex-1 py-1">
       <View
       className={`${focused ? "bg-violet-600": ""}`}
         style={{
@@ -77,7 +77,7 @@ function AppTabBarIcon({ color, focused, iconName, label }) {
           justifyContent: "center",
         }}
       >
-        <AntDesign name={iconName} size={20} color={focused?"#fff": "#000"} />
+        <Ionicons name={iconName} size={20} color={focused?"#fff": "#000"} />
       </View>
       {<Text style={{ fontSize: 12, color, flex: 1 }}>{label}</Text>}
     </View>

@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useMemo, useState } from "react";
 import { argsToMultiparams, substring } from "@/lib/string";
 import { Anime } from "@/lib/types/entities";
@@ -7,6 +7,7 @@ import { Image } from "expo-image";
 import { BLUR_HASH } from "@/lib/constants";
 import Animated from "react-native-reanimated";
 import { router } from "expo-router";
+import { LikeButton } from "@/components/atoms/LikeButton";
 
 type TProps = {
   onPress: () => void;
@@ -14,13 +15,22 @@ type TProps = {
 };
 export function AnimeItem(props: TProps) {
   const { onPress, data } = props;
-  useEffect(() => {}, [data.image]);
+
   return (
-    <Animated.View sharedTransitionTag={data.id}>
+    <Animated.View
+      sharedTransitionTag={data.id}
+      style={{ position: "relative" }}
+    >
       <TouchableOpacity
         onPress={onPress}
-        className="w-full max-w-[150] h-[255]"
+        className="w-full max-w-[150] h-[255] relative"
       >
+        <LikeButton
+          animeId={data.id}
+          animeImg={data.image}
+          animeTitle={data.title}
+          totalEpisodes={null}
+        />
         <Image
           placeholder={BLUR_HASH}
           source={{
@@ -62,10 +72,10 @@ export function AnimeItemSkeleton() {
   );
 }
 
-export const Item = React.memo(({ item }: { item: Anime }) => (
+export const Item = (({ item }: { item: Anime }) => (
   <Animated.View
     sharedTransitionTag={item.id}
-    style={{ margin: 10, maxWidth: 175, width: 175 }}
+    style={{ margin: 10, maxWidth: 160, width: 160 }}
   >
     <TouchableOpacity
       onPress={() =>
@@ -77,13 +87,20 @@ export const Item = React.memo(({ item }: { item: Anime }) => (
           )}`
         )
       }
-      className="flex-1"
+      className="flex-1 relative"
     >
+      <LikeButton
+        animeId={item.id}
+        animeImg={item.image}
+        animeTitle={item.title}
+        totalEpisodes={null}
+      />
       <Image
         source={{ uri: item.image }}
         placeholder={BLUR_HASH}
         style={{
-          width: 175,
+          width: 160,
+          borderRadius: 5,
           height: 247,
         }}
       />
@@ -99,14 +116,14 @@ export const ItemSkeleton = React.memo(() => (
   <AppSkeleton style={{ margin: 10 }}>
     <View
       style={{
-        width: 175,
+        width: 170,
         height: 247,
         borderRadius: 5,
       }}
     />
     <View
       style={{
-        width: 175,
+        width: 170,
         marginTop: 10,
         borderRadius: 20,
         height: 15,

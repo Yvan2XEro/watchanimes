@@ -1,7 +1,7 @@
 import { MULTIPARAMS_SEPARATOR, SLASH_REPLACE } from "./constants";
 
 export function substring(str: string, n: number) {
-  if (str.length < n) return str;
+  if (!str || str.length < n) return str;
   return str.substring(0, n) + "...";
 }
 

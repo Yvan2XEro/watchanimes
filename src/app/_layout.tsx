@@ -6,7 +6,9 @@ import { PropsWithChildren } from "react";
 export default function Layout({ children }: PropsWithChildren) {
   return (
     <AppProviders>
-      <Stack>
+      <Stack screenOptions={{
+        animation: "ios"
+      }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         {/* <Stack.Screen name="(stack)" /> */}
         {/* <Stack.Screen name="(stack)/animes/details/[id_image_title]" 
@@ -14,13 +16,13 @@ export default function Layout({ children }: PropsWithChildren) {
           animation: "ios"
         }}
          /> */}
-        {/* <Stack.Screen
-          name="(stack)/watch"
+        <Stack.Screen
+          name="(stack)/watch/[id]"
           options={{
             presentation: "modal",
             animation: "slide_from_bottom"
           }}
-        /> */}
+        />
       </Stack>
     </AppProviders>
   );

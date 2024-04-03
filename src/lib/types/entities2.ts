@@ -17,3 +17,17 @@ export type Episode2 = {
   episodeNum: string;
   episodeUrl: string;
 };
+
+export type EpisodeLink2 = {
+  Referer: string;
+  sources: {
+    file: string;
+    label: string;
+    type: string;
+  }[];
+  sources_bk: {
+    file: string;
+    label: string;
+    type: string;
+  }[];
+};

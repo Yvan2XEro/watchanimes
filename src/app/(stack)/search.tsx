@@ -39,9 +39,9 @@ export default function search() {
         page: pageParam,
         q,
       }),
-      getNextPageParam(lastPage, pages) {
-        return lastPage.hasNextPage ? pages.length : undefined
-      }
+    getNextPageParam(lastPage, pages) {
+      return lastPage.hasNextPage ? pages.length : undefined;
+    },
   });
 
   function RenderContent() {
@@ -63,8 +63,8 @@ export default function search() {
 
     return (
       <FlatList<Anime>
-      data={animesQuery.data?.pages.flatMap((page) => page.results)}
-      renderItem={(props) => <Item {...props} />}
+        data={animesQuery.data?.pages.flatMap((page) => page.results)}
+        renderItem={(props) => <Item {...props} />}
         refreshing={animesQuery.isRefetching && !animesQuery.isFetchingNextPage}
         numColumns={Math.round(width / 180)}
         ItemSeparatorComponent={() => <View className="h-1" />}

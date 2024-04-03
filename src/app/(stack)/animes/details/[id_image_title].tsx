@@ -4,8 +4,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  Pressable,
 } from "react-native";
-import React, { useLayoutEffect, useMemo } from "react";
+import React, { useLayoutEffect, useMemo, useState } from "react";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
 import { BLUR_HASH } from "@/lib/constants";
 import { extractsArgs, substring } from "@/lib/string";
@@ -21,6 +22,8 @@ import { useQuery } from "react-query";
 import { getANimeInfos2 } from "@/lib/api/animes2";
 import { AppSkeleton } from "@/components/atoms/AppSkeleton";
 import { Episode2 } from "@/lib/types/entities2";
+import { EpisodeItem, EpisodeItemSKeleton } from "@/components/atoms/EpisodeListItem";
+import { AnimeStore, useFavouritesStore } from "@/lib/store/useFavouritesStore";
 
 export default function Page() {
   let { id_image_title } = useLocalSearchParams<{ id_image_title: string }>();
@@ -34,6 +37,38 @@ export default function Page() {
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
 
+  const animeQuery = useQuery({
+    queryKey: ["animes", id],
+    queryFn: async () => await getANimeInfos2({ id }),
+  });
+  const { isFaourite, toggleFavourite, items: favourites } = useFavouritesStore();
+
+  function LikeButton() {
+
+   
+    return (
+      <Pressable
+        className="overflow-hidden items-center justify-center bg-white w-[30] h-[30] z-[50]"
+        onPress={() => {
+          toggleFavourite({
+            animeId: id,
+            animeImg: animeQuery.data?.animeImg,
+            animeTitle: animeQuery.data?.animeTitle,
+            totalEpisodes: animeQuery.data?.totalEpisodes,
+          });
+        }}
+        style={{
+          borderRadius: 20
+        }}
+      >
+        <Ionicons
+          name={isFaourite(id) ? "heart" : "heart-outline"}
+          text="Favourite"
+          size={22}
+        />
+      </Pressable>
+    );
+  }
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "",
@@ -61,9 +96,7 @@ export default function Page() {
           >
             <Ionicons name="search-outline" size={22} color={"#000"} />
           </TouchableOpacity>
-          <TouchableOpacity className="bg-white flex-row items-center justify-center h-[40] w-[40] rounded-[50]">
-            <Ionicons name="heart-outline" size={22} color={"#000"} />
-          </TouchableOpacity>
+          <LikeButton />
         </View>
       ),
       headerLeft: () => (
@@ -75,7 +108,7 @@ export default function Page() {
         </TouchableOpacity>
       ),
     });
-  }, []);
+  }, [favourites]);
 
   const scrollOffset = useScrollViewOffset(scrollRef);
 
@@ -106,14 +139,10 @@ export default function Page() {
     };
   }, []);
 
-  const animeQuery = useQuery({
-    queryKey: ["animes", id],
-    queryFn: async () => await getANimeInfos2({ id }),
-  });
+  const [reversed, setReversed] = useState(false);
 
-  console.log(animeQuery.isLoading, animeQuery.error, animeQuery.data, id);
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1">
       <Animated.ScrollView
         contentContainerStyle={{ paddingBottom: 105 }}
         ref={scrollRef}
@@ -123,7 +152,7 @@ export default function Page() {
           style={[{ height: IMG_HEIGHT, width }, imageAnimatedStyle]}
         >
           <Animated.View sharedTransitionTag={id} className="px-4">
-            <TouchableOpacity className="max-w-full">
+            <View className="max-w-full">
               <View className="flex-row items-center gap-2">
                 <Image
                   placeholder={BLUR_HASH}
@@ -176,23 +205,51 @@ export default function Page() {
                   </View>
                 </View>
               </View>
-            </TouchableOpacity>
-          </Animated.View>
-        </Animated.View>
-        <View className="bg-white px-3 gap-2">
-            <View>
-
             </View>
-          {animeQuery.data?.episodesList.map((e) => (
-            <EpisodeItem key={e.episodeId} episode={e} />
-          ))}
+          </Animated.View>
+          <View className="flex-row items-center gap-2 justify-between px-3 mt-2">
+            <Text className="font-bold text-xl">Episodes list</Text>
+            <TouchableOpacity
+              onPress={() => setReversed((v) => !v)}
+              className="border-black border bg-white rounded-md py-1 px-2 flex-row gap-1 items-center"
+            >
+              <Text className="font-bold">A-Z</Text>
+              <Ionicons
+                name={reversed ? "arrow-up" : "arrow-down"}
+                size={18}
+                color={"#000"}
+              />
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+        <View className="bg-white px-3 gap-1">
+         
+          {animeQuery.isLoading ? (
+            <>
+              {Array.from({ length: 40 }).map((_, i) => (
+                <EpisodeItemSKeleton key={i} />
+              ))}
+            </>
+          ) : (
+            <>
+              {reversed &&
+                animeQuery.data?.episodesList.map((e) => (
+                  <EpisodeItem key={e.episodeId} episode={e} />
+                ))}
+
+              {!reversed &&
+                animeQuery.data?.episodesList.map((e) => (
+                  <EpisodeItem key={e.episodeId} episode={e} />
+                )).reverse()}
+            </>
+          )}
         </View>
       </Animated.ScrollView>
     </View>
   );
 }
 
-const IMG_HEIGHT = 250;
+const IMG_HEIGHT = 240;
 const { width } = Dimensions.get("screen");
 
 function DetailRow({ label, value }: { label: string; value: string }) {
@@ -217,15 +274,3 @@ function DetailRowSkeleton() {
   );
 }
 
-function EpisodeItem({ episode }: { episode: Episode2 }) {
-  return (
-    <TouchableOpacity onPress={()=>router.push("/watch")} className="rounded-lg overflow-hidden">
-      <View className="flex-row justify-between items-center">
-        <Text className="font-semibold text-[18px] pl-2">
-          {episode.episodeNum}{"   "}Episode {episode.episodeNum}
-        </Text>
-        <Ionicons name="chevron-forward" size={24} color={"#000"} />
-      </View>
-    </TouchableOpacity>
-  );
-}

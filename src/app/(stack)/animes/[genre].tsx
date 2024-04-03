@@ -1,18 +1,13 @@
-import {
-  View,
-  FlatList,
-  Dimensions,
-} from "react-native";
+import { View, FlatList, Dimensions } from "react-native";
 import React, { useLayoutEffect } from "react";
 import { useLocalSearchParams, useNavigation } from "expo-router";
-import {
-  SLASH_REPLACE,
-} from "@/lib/constants";
+import { SLASH_REPLACE } from "@/lib/constants";
 import { Anime } from "@/lib/types/entities";
 import { useInfiniteQuery } from "react-query";
 import { getAnimesByGenre } from "@/lib/api/animes";
 import { AppLoader } from "@/components/atoms/AppLoader";
 import { Item, ItemSkeleton } from "@/components/organisms/AnimeSection";
+import { FlashList } from "@shopify/flash-list";
 
 const { width } = Dimensions.get("window");
 export default function animesIindex() {
@@ -72,16 +67,14 @@ export default function animesIindex() {
     );
 
   return (
-    <View className="flex-1 px-3">
-      <FlatList<Anime>
+    <View className="flex-1 px-2">
+      <FlashList<Anime>
         data={data?.pages.flatMap((page) => page.results)}
         renderItem={(props) => <Item {...props} />}
         refreshing={isRefetching && !isFetchingNextPage}
         numColumns={Math.round(width / 180)}
+        estimatedItemSize={150}
         ItemSeparatorComponent={() => <View className="h-1" />}
-        contentContainerStyle={{
-          alignItems: "center",
-        }}
         onRefresh={async () => await refetch()}
         ListFooterComponent={isFetchingNextPage && <AppLoader />}
         keyExtractor={(item, index) => index + item.id}
@@ -94,4 +87,3 @@ export default function animesIindex() {
     </View>
   );
 }
-
