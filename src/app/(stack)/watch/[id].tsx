@@ -120,6 +120,30 @@ export default function watch() {
     );
   }
 
+  const OthersAnimes = useMemo(
+    () => (
+      <>
+        <AnimesSection2
+          title="Recent release"
+          fetchData={() =>
+            getRecentRelease2({
+              page: 1,
+            })
+          }
+        />
+        <AnimesSection
+          title="Popular"
+          fetchData={() =>
+            getPopular({
+              page: 1,
+            })
+          }
+        />
+      </>
+    ),
+    []
+  );
+
   return (
     <View style={{ top }} className="flex-1">
       <View className="h-[200] max-h-[200] relative flex-1 ">
@@ -131,12 +155,12 @@ export default function watch() {
               source: {
                 uri: episodeQuery.data?.sources?.[0].file,
               },
-              shouldPlay: false,
+              shouldPlay: true,
               resizeMode: ResizeMode.CONTAIN,
               useNativeControls: false,
               onReadyForDisplay(event) {
                 addToRecents({
-                  animeId: animeQuery.data.animeId,
+                  animeId,
                   animeImg: animeQuery.data.animeImg,
                   animeTitle: animeQuery.data.animeTitle,
                   episodeId: id,
@@ -250,22 +274,7 @@ export default function watch() {
               </View>
             )}
           </Animated.View>
-          <AnimesSection2
-            title="Recent release"
-            fetchData={() =>
-              getRecentRelease2({
-                page: 1,
-              })
-            }
-          />
-          <AnimesSection
-            title="Popular"
-            fetchData={() =>
-              getPopular({
-                page: 1,
-              })
-            }
-          />
+          {OthersAnimes}
         </Animated.ScrollView>
       </View>
     </View>

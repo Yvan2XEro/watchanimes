@@ -56,7 +56,6 @@ export default function Page() {
           }
         />
         <AnimesSection2
-          genre="drama"
           title="Top hairing"
           fetchData={() =>
             getTopAiring2({

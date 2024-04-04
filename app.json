@@ -16,6 +16,22 @@
       ]
     ],
     "name": "WatchAnimes",
-    "slug": "WatchAnimes"
+    "slug": "WatchAnimes",
+    "android": {
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "*.myapp.io",
+              "pathPrefix": "/records"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    }
   }
 }

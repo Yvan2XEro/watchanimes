@@ -73,7 +73,7 @@ export async function getMovies2({
     );
     const data = await response.json();
     if (response.ok) {
-      return data as Paginated<Anime>;
+      return data as Anime2[]
     }
     return Promise.reject(data);
   } catch (error) {

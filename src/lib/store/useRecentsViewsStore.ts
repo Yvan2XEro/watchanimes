@@ -17,7 +17,7 @@ export type AnimeRecentStore = {
   date?: string;
 };
 type State = {
-  items: AnimeRecentStore[];
+  items: Record<string, AnimeRecentStore>;
 };
 
 // const storage = new MMKV();
@@ -41,22 +41,14 @@ type Actions = {
 export const useRecentsViewsStore = create<State & Actions>()(
   persist(
     immer((set) => ({
-      items: [],
+      items: {},
       addToRecents: (item) => {
         set((state) => {
-          const oldItem = state.items.find((i) => i.animeId === item.animeId);
-          const date = new Date().toLocaleString();
-          if (!oldItem) {
-            state.items.push({
-              ...item,
-              date,
-            })
-            return;
-          }
-          const otherItems = state.items.filter(
-            (i) => i.animeId != item.animeId
-          );
-          state.items = [...otherItems, { ...item, date }];
+          const date = new Date().toISOString();
+          state.items[item.animeId] = {
+            ...item,
+            date,
+          };
         });
       },
     })),

@@ -22,7 +22,10 @@ import { useQuery } from "react-query";
 import { getANimeInfos2 } from "@/lib/api/animes2";
 import { AppSkeleton } from "@/components/atoms/AppSkeleton";
 import { Episode2 } from "@/lib/types/entities2";
-import { EpisodeItem, EpisodeItemSKeleton } from "@/components/atoms/EpisodeListItem";
+import {
+  EpisodeItem,
+  EpisodeItemSKeleton,
+} from "@/components/atoms/EpisodeListItem";
 import { AnimeStore, useFavouritesStore } from "@/lib/store/useFavouritesStore";
 
 export default function Page() {
@@ -41,15 +44,18 @@ export default function Page() {
     queryKey: ["animes", id],
     queryFn: async () => await getANimeInfos2({ id }),
   });
-  const { isFaourite, toggleFavourite, items: favourites } = useFavouritesStore();
+  const {
+    isFaourite,
+    toggleFavourite,
+    items: favourites,
+  } = useFavouritesStore();
 
   function LikeButton() {
-
-   
     return (
       <Pressable
         className="overflow-hidden items-center justify-center bg-white w-[30] h-[30] z-[50]"
         onPress={() => {
+          if (!animeQuery.data) return;
           toggleFavourite({
             animeId: id,
             animeImg: animeQuery.data?.animeImg,
@@ -58,7 +64,7 @@ export default function Page() {
           });
         }}
         style={{
-          borderRadius: 20
+          borderRadius: 20,
         }}
       >
         <Ionicons
@@ -223,7 +229,6 @@ export default function Page() {
           </View>
         </Animated.View>
         <View className="bg-white px-3 gap-1">
-         
           {animeQuery.isLoading ? (
             <>
               {Array.from({ length: 40 }).map((_, i) => (
@@ -238,9 +243,9 @@ export default function Page() {
                 ))}
 
               {!reversed &&
-                animeQuery.data?.episodesList.map((e) => (
-                  <EpisodeItem key={e.episodeId} episode={e} />
-                )).reverse()}
+                animeQuery.data?.episodesList
+                  .map((e) => <EpisodeItem key={e.episodeId} episode={e} />)
+                  .reverse()}
             </>
           )}
         </View>
@@ -273,4 +278,3 @@ function DetailRowSkeleton() {
     </AppSkeleton>
   );
 }
-

@@ -1,3 +1,5 @@
+import { formatDistanceToNow, addWeeks, format } from "date-fns";
+
 export const debounce = <F extends (...args: any[]) => any>(
   fn: F,
   delay: number
@@ -12,3 +14,13 @@ export const debounce = <F extends (...args: any[]) => any>(
     }, delay);
   } as F;
 };
+
+export function formatDate(date: Date) {
+  if (new Date(addWeeks(new Date(), 1)) < date) {
+    return new Date(date).toLocaleString();
+  }
+
+  return formatDistanceToNow(new Date(date), {
+    includeSeconds: false,
+  });
+}

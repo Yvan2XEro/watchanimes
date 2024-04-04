@@ -1,14 +1,13 @@
-import { AnimeItem2 } from "@/components/organisms/AnimeSection2/AnimeItem2";
 import { BLUR_HASH } from "@/lib/constants";
 import { useRecentsViewsStore } from "@/lib/store/useRecentsViewsStore";
 import { substring } from "@/lib/string";
+import { formatDate } from "@/lib/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { Link, router } from "expo-router";
 import React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Page() {
   return (
@@ -20,23 +19,33 @@ export default function Page() {
 
 function Content() {
   const { items } = useRecentsViewsStore();
-  console.log(items.length)
+  console.log("SLLSLS", Object.entries(items).length);
 
   return (
-    <View className="flex-1">
-      <FlatList
-        data={items}
+    <View className="flex-1 px-3">
+      <FlashList
+        data={Object.entries(items)
+          .map(([_, item]) => item)
+          .sort((a, b) => {
+            const dateA = new Date(a.date);
+            const dateB = new Date(b.date);
+            if (dateA.getTime() === dateB.getTime()) {
+              return 0;
+            }
+            return dateA.getTime() > dateB.getTime() ? 1 : -1;
+          }).reverse()}
         estimatedItemSize={350}
+        keyExtractor={(item) => item.animeId}
         renderItem={({ item }) => {
           return (
-            <View className="flex-1 flex-row p-1">
+            <View className="flex-1 flex-row mb-2">
               <Image
                 placeholder={BLUR_HASH}
                 source={{
                   uri: item.animeImg,
                 }}
                 style={{
-                  width: 15000/212,
+                  width: 15000 / 212,
                   borderRadius: 5,
                   height: 100,
                 }}
@@ -47,7 +56,10 @@ function Content() {
                 </Text>
                 <View className="flex-row items-center gap-2">
                   <Ionicons name="time-sharp" size={15} />
-                  <Text className="text-sm text-violet-600">{item.date}</Text>
+                  <Text className="text-sm text-violet-600">{formatDate(new Date(item.date))}</Text>
+                </View>
+                <View>
+                 <Text>Episode {item.episodeId.split("-episode-")[1]}</Text>
                 </View>
                 <View className="flex-row">
                   <TouchableOpacity
