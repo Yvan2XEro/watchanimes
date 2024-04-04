@@ -1,4 +1,5 @@
 import { formatDistanceToNow, addWeeks, format } from "date-fns";
+import { Share } from "react-native";
 
 export const debounce = <F extends (...args: any[]) => any>(
   fn: F,
@@ -23,4 +24,21 @@ export function formatDate(date: Date) {
   return formatDistanceToNow(new Date(date), {
     includeSeconds: false,
   });
+}
+
+
+export function shareAnime(url: string) {
+  Share.share({
+    url: url,
+    title: "I just found this amazing anime, try it too!",
+    message: url
+  })
+}
+
+export function shareIpisode(url: string) {
+  Share.share({
+    url: url,
+    title: "I just found this amazing anime, try it too!",
+    message: url
+  })
 }

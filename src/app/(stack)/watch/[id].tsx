@@ -17,7 +17,7 @@ import {
   getRecentRelease2,
 } from "@/lib/api/animes2";
 import { Ionicons } from "@expo/vector-icons";
-import { BLUR_HASH, PRIMARY } from "@/lib/constants";
+import { BLUR_HASH, PRIMARY, WEB_APP_URL } from "@/lib/constants";
 import { Image } from "expo-image";
 import VideoPlayer from "expo-video-player";
 import { AppSkeleton } from "@/components/atoms/AppSkeleton";
@@ -40,6 +40,7 @@ import {
 import { useFavouritesStore } from "@/lib/store/useFavouritesStore";
 import { useKeepAwake } from "expo-keep-awake";
 import { useRecentsViewsStore } from "@/lib/store/useRecentsViewsStore";
+import { shareIpisode } from "@/lib/utils";
 
 export default function watch() {
   const { top } = useSafeAreaInsets();
@@ -206,7 +207,7 @@ export default function watch() {
           </View>
           <View className="flex-row items-center justify-evenly">
             <LikeButton />
-            <ActionButton iconName="share" text="Share" onPress={() => {}} />
+            <ActionButton iconName="share" text="Share" onPress={() => shareIpisode(`${WEB_APP_URL}/watch/${id}`)} />
             <ActionButton
               iconName="download"
               text="Download"

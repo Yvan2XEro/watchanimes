@@ -6,10 +6,10 @@ import {
   Dimensions,
   Pressable,
 } from "react-native";
-import React, { useLayoutEffect, useMemo, useState } from "react";
+import React, { useCallback, useLayoutEffect, useMemo, useState } from "react";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import { BLUR_HASH } from "@/lib/constants";
-import { extractsArgs, substring } from "@/lib/string";
+import { BLUR_HASH, WEB_APP_URL } from "@/lib/constants";
+import { argsToMultiparams, extractsArgs, substring } from "@/lib/string";
 import Animated, {
   interpolate,
   useAnimatedRef,
@@ -27,6 +27,7 @@ import {
   EpisodeItemSKeleton,
 } from "@/components/atoms/EpisodeListItem";
 import { AnimeStore, useFavouritesStore } from "@/lib/store/useFavouritesStore";
+import { shareAnime } from "@/lib/utils";
 
 export default function Page() {
   let { id_image_title } = useLocalSearchParams<{ id_image_title: string }>();
@@ -49,6 +50,10 @@ export default function Page() {
     toggleFavourite,
     items: favourites,
   } = useFavouritesStore();
+
+  const onShareAnime = useCallback(() => {
+    shareAnime(`${WEB_APP_URL}/animes/details/${id_image_title}`);
+  }, [id_image_title]);
 
   function LikeButton() {
     return (
@@ -93,7 +98,10 @@ export default function Page() {
       ),
       headerRight: () => (
         <View className="flex-row items-center gap-1">
-          <TouchableOpacity className="bg-white flex-row items-center justify-center h-[40] w-[40] rounded-[50]">
+          <TouchableOpacity
+            onPress={onShareAnime}
+            className="bg-white flex-row items-center justify-center h-[40] w-[40] rounded-[50]"
+          >
             <Ionicons name="share-outline" size={22} color={"#000"} />
           </TouchableOpacity>
           <TouchableOpacity
