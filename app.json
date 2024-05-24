@@ -3,6 +3,7 @@
     "scheme": "acme",
     "userInterfaceStyle": "automatic",
     "orientation": "default",
+    "icon": "src/assets/icon.png",
     "web": {
       "output": "static",
       "bundler": "metro"
@@ -15,8 +16,13 @@
         }
       ]
     ],
-    "name": "WatchAnimes",
-    "slug": "WatchAnimes",
+    "splash": {
+      "image": "./src/assets/splash.png",
+      "backgroundColor": "#3f0859",
+      "resizeMode": "contain"
+    },
+    "name": "Otaflix",
+    "slug": "Otaflix",
     "android": {
       "intentFilters": [
         {
@@ -29,9 +35,21 @@
               "pathPrefix": "/records"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
-      ]
+      ],
+      "package": "com.yvan_2x.Otaflix"
+    },
+    "extra": {
+      "router": {
+        "origin": "https://n"
+      },
+      "eas": {
+        "projectId": "2759ddd8-d71d-4e23-8e44-169964690e57"
+      }
     }
   }
 }

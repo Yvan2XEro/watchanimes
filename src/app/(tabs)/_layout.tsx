@@ -21,8 +21,8 @@ export default function Layout() {
                 <AppTabBarIcon
                   color={color}
                   focused={focused}
-                  iconName="home-outline"
-                  label="Home"
+                  iconName="search-outline"
+                  label="Brownse"
                 />
               );
             },

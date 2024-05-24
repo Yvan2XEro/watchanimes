@@ -63,7 +63,7 @@ export function AppBottomSheetProvider({children}: PropsWithChildren) {
       {children}
       <BottomSheetModalProvider>
         <BottomSheetModal
-          snapPoints={['25%', '50%']}
+          snapPoints={['55%']}
           index={0}
           ref={bottomSheetModalRef}
           backdropComponent={props => <AppSheetBackdrop {...props} />}

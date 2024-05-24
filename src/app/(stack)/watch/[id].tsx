@@ -41,6 +41,7 @@ import { useFavouritesStore } from "@/lib/store/useFavouritesStore";
 import { useKeepAwake } from "expo-keep-awake";
 import { useRecentsViewsStore } from "@/lib/store/useRecentsViewsStore";
 import { shareIpisode } from "@/lib/utils";
+import { Episode2 } from "@/lib/types/entities2";
 
 export default function watch() {
   const { top } = useSafeAreaInsets();
@@ -56,6 +57,11 @@ export default function watch() {
     navigation.setOptions({
       headerTransparent: true,
       headerTitle: "",
+      headerLeft: () => (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Ionicons name="chevron-down" size={24} color={PRIMARY} />
+        </TouchableOpacity>
+      ),
     });
   }, []);
 
@@ -94,11 +100,7 @@ export default function watch() {
               ))}
             </>
           ) : (
-            <>
-              {animeQuery.data?.episodesList.map((e) => (
-                <EpisodeItem key={e.episodeId} episode={e} />
-              ))}
-            </>
+            <SelectEpisode episodes={animeQuery.data.episodesList} id={id} />
           )}
         </View>
       </BottomSheetScrollView>
@@ -201,17 +203,18 @@ export default function watch() {
             <Text className="font-bold text-xl">
               Episode {id.split("-episode-")?.[1]}
             </Text>
-            <TouchableOpacity className="p-2" onPress={presentEpisodesList}>
-              <Ionicons name="list-outline" size={24} color={PRIMARY} />
-            </TouchableOpacity>
           </View>
           <View className="flex-row items-center justify-evenly">
             <LikeButton />
-            <ActionButton iconName="share" text="Share" onPress={() => shareIpisode(`${WEB_APP_URL}/watch/${id}`)} />
             <ActionButton
-              iconName="download"
-              text="Download"
-              onPress={() => {}}
+              iconName="share"
+              text="Share"
+              onPress={() => shareIpisode(`${WEB_APP_URL}/watch/${id}`)}
+            />
+            <ActionButton
+              iconName="list-outline"
+              text="Episodes"
+              onPress={presentEpisodesList}
             />
           </View>
         </View>
@@ -300,5 +303,19 @@ function ViedeoPlaceholder() {
     <View className="w-full h-full inset-0 bg-black flex-1 items-center justify-center">
       <ActivityIndicator size="large" color="#ffffff" />
     </View>
+  );
+}
+
+function SelectEpisode({ episodes, id }: { episodes: Episode2[]; id: string }) {
+  return (
+    <>
+      {episodes.map((e) => (
+        <EpisodeItem
+          isPlaying={id === e.episodeId}
+          key={e.episodeId}
+          episode={e}
+        />
+      ))}
+    </>
   );
 }

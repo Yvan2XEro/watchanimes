@@ -1,13 +1,19 @@
 import { BLUR_HASH } from "@/lib/constants";
 import { useRecentsViewsStore } from "@/lib/store/useRecentsViewsStore";
-import { substring } from "@/lib/string";
+import { argsToMultiparams, substring } from "@/lib/string";
 import { formatDate } from "@/lib/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { Link, router } from "expo-router";
 import React from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function Page() {
   return (
@@ -19,7 +25,6 @@ export default function Page() {
 
 function Content() {
   const { items } = useRecentsViewsStore();
-  console.log("SLLSLS", Object.entries(items).length);
 
   return (
     <View className="flex-1 px-3">
@@ -33,8 +38,10 @@ function Content() {
               return 0;
             }
             return dateA.getTime() > dateB.getTime() ? 1 : -1;
-          }).reverse()}
+          })
+          .reverse()}
         estimatedItemSize={350}
+        showsVerticalScrollIndicator={false}
         keyExtractor={(item) => item.animeId}
         renderItem={({ item }) => {
           return (
@@ -51,16 +58,20 @@ function Content() {
                 }}
               />
               <View className="flex-1 p-2 gap-1">
-                <Text className="text-xl font-bold flex-wrap ">
-                  {substring(item.animeTitle, 45)}
-                </Text>
-                <View className="flex-row items-center gap-2">
-                  <Ionicons name="time-sharp" size={15} />
-                  <Text className="text-sm text-violet-600">{formatDate(new Date(item.date))}</Text>
-                </View>
-                <View>
-                 <Text>Episode {item.episodeId.split("-episode-")[1]}</Text>
-                </View>
+                <Pressable onPress={()=> router.push(`/animes/details/${argsToMultiparams(item.animeId, item.animeImg, item.animeTitle)}`)}>
+                  <Text className="text-xl font-bold flex-wrap ">
+                    {substring(item.animeTitle, 45)}
+                  </Text>
+                  <View className="flex-row items-center gap-2">
+                    <Ionicons name="time-sharp" size={15} />
+                    <Text className="text-sm text-violet-600">
+                      {formatDate(new Date(item.date))}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text>Episode {item.episodeId.split("-episode-")[1]}</Text>
+                  </View>
+                </Pressable>
                 <View className="flex-row">
                   <TouchableOpacity
                     onPress={() => router.push(`/watch/${item.episodeId}`)}

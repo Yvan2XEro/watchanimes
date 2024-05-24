@@ -28,6 +28,7 @@ import {
 } from "@/components/atoms/EpisodeListItem";
 import { AnimeStore, useFavouritesStore } from "@/lib/store/useFavouritesStore";
 import { shareAnime } from "@/lib/utils";
+import { useRecentsViewsStore } from "@/lib/store/useRecentsViewsStore";
 
 export default function Page() {
   let { id_image_title } = useLocalSearchParams<{ id_image_title: string }>();
@@ -155,6 +156,15 @@ export default function Page() {
 
   const [reversed, setReversed] = useState(false);
 
+  const { items } = useRecentsViewsStore();
+
+  const lastPlayEpisode = useMemo(() => {
+    const anime = Object.values(items).find((anime) => anime.animeId === id);
+    if (!anime) return null;
+
+    return anime.episodeId;
+  }, [Object.entries(items), id]);
+
   return (
     <View className="flex-1">
       <Animated.ScrollView
@@ -219,23 +229,58 @@ export default function Page() {
                   </View>
                 </View>
               </View>
+              <View
+                style={{ height: IMG_HEIGHT - 200, alignItems: "center" }}
+                className="justify-center "
+              >
+                <View className="flex-row flex gap-1 flex-wrap items-start">
+                  {!!lastPlayEpisode && (
+                    <TouchableOpacity
+                      onPress={() => router.push(`/watch/${lastPlayEpisode}`)}
+                      className="bg-white p-2 rounded-lg flex-row items-center gap-2"
+                    >
+                      <Ionicons name={"pause"} color={"#000000"} size={20} />
+                      <Text className="font-bold">Continue</Text>
+                    </TouchableOpacity>
+                  )}
+
+                  <TouchableOpacity
+                    onPress={() => {
+                      if ((animeQuery.data?.episodesList.length || 0) > 0)
+                        router.push(
+                          `/watch/${
+                            reversed
+                              ? animeQuery.data?.episodesList.reverse()[0]
+                                  .episodeId
+                              : animeQuery.data?.episodesList[0]
+                                  .episodeId
+                          }`
+                        );
+                    }}
+                    className="bg-white p-2 rounded-lg flex-row items-center gap-2"
+                  >
+                    <Ionicons name={"play"} color={"#000000"} size={20} />
+                    <Text className="font-bold">Play</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
             </View>
           </Animated.View>
-          <View className="flex-row items-center gap-2 justify-between px-3 mt-2">
-            <Text className="font-bold text-xl">Episodes list</Text>
-            <TouchableOpacity
-              onPress={() => setReversed((v) => !v)}
-              className="border-black border bg-white rounded-md py-1 px-2 flex-row gap-1 items-center"
-            >
-              <Text className="font-bold">A-Z</Text>
-              <Ionicons
-                name={reversed ? "arrow-up" : "arrow-down"}
-                size={18}
-                color={"#000"}
-              />
-            </TouchableOpacity>
-          </View>
         </Animated.View>
+        <View className="bg-white py-1 flex-row items-center gap-2 justify-between px-3">
+          <Text className="font-bold text-xl">Episodes list</Text>
+          <TouchableOpacity
+            onPress={() => setReversed((v) => !v)}
+            className="border-black border bg-white rounded-md py-1 px-2 flex-row gap-1 items-center"
+          >
+            <Text className="font-bold">A-Z</Text>
+            <Ionicons
+              name={reversed ? "arrow-up" : "arrow-down"}
+              size={18}
+              color={"#000"}
+            />
+          </TouchableOpacity>
+        </View>
         <View className="bg-white px-3 gap-1">
           {animeQuery.isLoading ? (
             <>
@@ -252,7 +297,13 @@ export default function Page() {
 
               {!reversed &&
                 animeQuery.data?.episodesList
-                  .map((e) => <EpisodeItem key={e.episodeId} episode={e} />)
+                  .map((e) => (
+                    <EpisodeItem
+                      key={e.episodeId}
+                      episode={e}
+                      isPlaying={lastPlayEpisode == e.episodeId}
+                    />
+                  ))
                   .reverse()}
             </>
           )}
@@ -262,7 +313,7 @@ export default function Page() {
   );
 }
 
-const IMG_HEIGHT = 240;
+const IMG_HEIGHT = 270;
 const { width } = Dimensions.get("screen");
 
 function DetailRow({ label, value }: { label: string; value: string }) {
