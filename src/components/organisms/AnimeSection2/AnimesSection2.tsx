@@ -1,13 +1,12 @@
-import { View, Text } from "react-native";
-import React, { ReactNode } from "react";
-import { Link, router } from "expo-router";
-import { FlashList } from "@shopify/flash-list";
-import { AnimeItem2, AnimeItemSkeleton } from "./AnimeItem2";
-import { useQuery } from "react-query";
-import { AppLoader } from "@/components/atoms/AppLoader";
 import { SLASH_REPLACE } from "@/lib/constants";
 import { argsToMultiparams } from "@/lib/string";
 import { Anime2 } from "@/lib/types/entities2";
+import { FlashList } from "@shopify/flash-list";
+import { Link, router } from "expo-router";
+import React, { ReactNode } from "react";
+import { Text, View } from "react-native";
+import { useQuery } from "react-query";
+import { AnimeItem2, AnimeItemSkeleton } from "./AnimeItem2";
 
 type TProps = {
   genre?: string;

@@ -1,12 +1,11 @@
 import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
 import {
-  StateStorage,
   createJSONStorage,
-  persist,
+  persist
 } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
 // import { MMKV } from "react-native-mmkv";
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export type AnimeStore = {
@@ -40,7 +39,7 @@ type Actions = {
 
 export const useFavouritesStore = create<State & Actions>()(
   persist(
-    immer((set, state) => ({
+    immer((set, getState) => ({
       items: {},
       toggleFavourite: (item) => {
         set((state) => {
@@ -52,7 +51,7 @@ export const useFavouritesStore = create<State & Actions>()(
         });
       },
       isFaourite(id) {
-        return state().items[id] ? true : false;
+        return getState().items[id] ? true : false;
       },
     })),
     {

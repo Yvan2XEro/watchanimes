@@ -12,6 +12,16 @@ export type Anime2 = {
   episodesList: Episode2[];
 };
 
+export type PlayingAnime = {
+  animeId: string;
+  episodeId: string;
+  episodeNum: string;
+  episodeUrl: string;
+  animeImg: string;
+  animeTitle: string;
+  type: string;
+};
+
 export type Episode2 = {
   episodeId: string;
   episodeNum: string;

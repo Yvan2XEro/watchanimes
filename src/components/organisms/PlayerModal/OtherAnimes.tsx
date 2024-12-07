@@ -1,42 +1,21 @@
 import { Item, ItemSkeleton } from "@/components/organisms/AnimeSection";
 import { searchAnimes } from "@/lib/api/animes";
+import usePlayerStatusStore from "@/lib/store/usePlayerStatusStore";
 import { Anime } from "@/lib/types/entities";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "expo-router";
-import React, { useLayoutEffect, useState } from "react";
-import {
-  Dimensions,
-  FlatList,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import Animated from "react-native-reanimated";
+import React from "react";
+import { Dimensions, FlatList, View } from "react-native";
 import { useInfiniteQuery } from "react-query";
 const { width } = Dimensions.get("window");
 
-export default function search() {
-  const navigation = useNavigation();
-  const [q, setQ] = useState("");
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      header: () => (
-        <AppSearchbar
-          value={q}
-          onChange={setQ}
-          onGoback={() => navigation.goBack()}
-        />
-      ),
-    });
-  }, []);
+export default function OtherAnimes() {
+  const { status, setStatus, setAnime } = usePlayerStatusStore();
 
   const animesQuery = useInfiniteQuery({
-    queryKey: ["animes", q],
-    enabled: q.length > 2,
+    queryKey: ["animes", "others"],
     queryFn: async ({ pageParam = 1 }) =>
       searchAnimes({
         page: pageParam,
-        q,
+        q: "others",
       }),
     getNextPageParam(lastPage, pages) {
       return lastPage.hasNextPage ? pages.length : undefined;
@@ -63,7 +42,17 @@ export default function search() {
     return (
       <FlatList<Anime>
         data={animesQuery.data?.pages.flatMap((page) => page.results)}
-        renderItem={(props) => <Item {...props} />}
+        renderItem={(props) => (
+          <Item
+            {...{
+              ...props,
+              onPress() {
+                setStatus("minimised")
+                setAnime(null);
+              },
+            }}
+          />
+        )}
         refreshing={animesQuery.isRefetching && !animesQuery.isFetchingNextPage}
         numColumns={Math.round(width / 180)}
         ItemSeparatorComponent={() => <View className="h-1" />}
@@ -84,33 +73,6 @@ export default function search() {
   return (
     <View className="bg-white flex-1 px-3">
       <RenderContent />
-    </View>
-  );
-}
-
-type TProps = {
-  onGoback: () => void;
-  value: string;
-  onChange: (t: string) => void;
-};
-function AppSearchbar({ onGoback, onChange }: TProps) {
-  return (
-    <View className="mt-[24] flex-row items-center p-1">
-      <TouchableOpacity
-        className="bg-white flex-row items-center justify-center h-[40] w-[40] rounded-[50]"
-        onPress={onGoback}
-      >
-        <Ionicons name="chevron-back" size={24} color={"#000"} />
-      </TouchableOpacity>
-      <TextInput
-        onChangeText={onChange}
-        placeholder="Search..."
-        className="flex-auto"
-        autoFocus
-      />
-      <Animated.View sharedTransitionTag="search">
-        <AntDesign name="search1" size={24} color="black" />
-      </Animated.View>
     </View>
   );
 }

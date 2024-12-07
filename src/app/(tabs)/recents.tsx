@@ -5,15 +5,9 @@ import { formatDate } from "@/lib/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import React from "react";
-import {
-  FlatList,
-  Pressable,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Pressable, Text, TouchableOpacity, View } from "react-native";
 
 export default function Page() {
   return (
@@ -58,7 +52,17 @@ function Content() {
                 }}
               />
               <View className="flex-1 p-2 gap-1">
-                <Pressable onPress={()=> router.push(`/animes/details/${argsToMultiparams(item.animeId, item.animeImg, item.animeTitle)}`)}>
+                <Pressable
+                  onPress={() =>
+                    router.push(
+                      `/animes/details/${argsToMultiparams(
+                        item.animeId,
+                        item.animeImg,
+                        item.animeTitle
+                      )}`
+                    )
+                  }
+                >
                   <Text className="text-xl font-bold flex-wrap ">
                     {substring(item.animeTitle, 45)}
                   </Text>

@@ -1,28 +1,37 @@
-import { View, Text } from "react-native";
-import React from "react";
-import { Episode2 } from "@/lib/types/entities2";
-import { TouchableOpacity } from "@gorhom/bottom-sheet";
-import { router } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
-import { AppSkeleton } from "../AppSkeleton";
-import { PRIMARY } from "@/lib/constants";
 import { useAppBottomSheet } from "@/contexts/providers/app-bottom-sheet";
+import { PRIMARY } from "@/lib/constants";
+import usePlayerStatusStore from "@/lib/store/usePlayerStatusStore";
+import { Anime2, Episode2 } from "@/lib/types/entities2";
+import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity } from "@gorhom/bottom-sheet";
+import React from "react";
+import { Text, View } from "react-native";
+import { AppSkeleton } from "../AppSkeleton";
 
-export function EpisodeItem({
-  episode,
-  isPlaying = false,
-}: {
+type TProps = {
   episode: Episode2;
   isPlaying?: boolean;
-}) {
+  anime: Anime2;
+};
+export function EpisodeItem(props: TProps) {
+  const { episode, isPlaying = false, anime } = props;
+  const { playAnime } = usePlayerStatusStore();
+  
   const { dismissAppBottomSheet } = useAppBottomSheet();
   return (
     <TouchableOpacity
       onPress={() => {
-        if(isPlaying) {
-          return dismissAppBottomSheet()
+        if (isPlaying) {
+          return dismissAppBottomSheet();
         }
-        router.push(`/watch/${episode.episodeId}`)}}
+        playAnime({
+          ...anime,
+          episodeId: episode.episodeId,
+          episodeNum: episode.episodeNum,
+          episodeUrl: episode.episodeUrl,
+        });
+        // router.push(`/watch/${episode.episodeId}`);
+      }}
       className="rounded-lg overflow-hidden py-2"
     >
       <View className="flex-row justify-between items-center">

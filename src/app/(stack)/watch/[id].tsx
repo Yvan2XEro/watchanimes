@@ -1,47 +1,39 @@
+import { AppSkeleton } from "@/components/atoms/AppSkeleton";
 import {
-  View,
-  Dimensions,
-  ActivityIndicator,
-  Text,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
-import React, { useLayoutEffect, useMemo } from "react";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import { ResizeMode, Video } from "expo-av";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useQuery } from "react-query";
+  EpisodeItemSKeleton,
+  SelectEpisode,
+} from "@/components/atoms/EpisodeListItem";
+import { AnimesSection } from "@/components/organisms/AnimeSection";
+import { AnimesSection2 } from "@/components/organisms/AnimeSection2";
+import { useAppBottomSheet } from "@/contexts/providers/app-bottom-sheet";
+import { getPopular } from "@/lib/api/animes";
 import {
   getANimeInfos2,
   getEpisodeStreamingLink,
   getRecentRelease2,
 } from "@/lib/api/animes2";
-import { Ionicons } from "@expo/vector-icons";
 import { BLUR_HASH, PRIMARY, WEB_APP_URL } from "@/lib/constants";
+import { useFavouritesStore } from "@/lib/store/useFavouritesStore";
+import { useRecentsViewsStore } from "@/lib/store/useRecentsViewsStore";
+import { substring, transformOtherNames } from "@/lib/string";
+import { shareIpisode } from "@/lib/utils";
+import { Ionicons } from "@expo/vector-icons";
+import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { ResizeMode, Video } from "expo-av";
 import { Image } from "expo-image";
+import { useKeepAwake } from "expo-keep-awake";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import VideoPlayer from "expo-video-player";
-import { AppSkeleton } from "@/components/atoms/AppSkeleton";
-import { substring } from "@/lib/string";
-import { AnimesSection2 } from "@/components/organisms/AnimeSection2";
-import { AnimesSection } from "@/components/organisms/AnimeSection";
-import { getPopular } from "@/lib/api/animes";
+import React, { useCallback, useLayoutEffect, useMemo } from "react";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
   interpolate,
   useAnimatedRef,
   useAnimatedStyle,
   useScrollViewOffset,
 } from "react-native-reanimated";
-import { useAppBottomSheet } from "@/contexts/providers/app-bottom-sheet";
-import { BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import {
-  EpisodeItem,
-  EpisodeItemSKeleton,
-} from "@/components/atoms/EpisodeListItem";
-import { useFavouritesStore } from "@/lib/store/useFavouritesStore";
-import { useKeepAwake } from "expo-keep-awake";
-import { useRecentsViewsStore } from "@/lib/store/useRecentsViewsStore";
-import { shareIpisode } from "@/lib/utils";
-import { Episode2 } from "@/lib/types/entities2";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useQuery } from "react-query";
 
 export default function watch() {
   const { top } = useSafeAreaInsets();
@@ -89,7 +81,7 @@ export default function watch() {
   const { presentAppBottomSheet } = useAppBottomSheet();
   const { addToRecents } = useRecentsViewsStore();
 
-  const presentEpisodesList = () => {
+  const presentEpisodesList = useCallback(() => {
     presentAppBottomSheet(
       <BottomSheetScrollView>
         <View className="px-3 gap-1">
@@ -100,12 +92,12 @@ export default function watch() {
               ))}
             </>
           ) : (
-            <SelectEpisode episodes={animeQuery.data.episodesList} id={id} />
+            <SelectEpisode anime={animeQuery.data} id={id} />
           )}
         </View>
       </BottomSheetScrollView>
     );
-  };
+  }, [animeQuery.isLoading, animeQuery.data]);
 
   function LikeButton() {
     const { isFaourite, toggleFavourite } = useFavouritesStore();
@@ -117,7 +109,12 @@ export default function watch() {
         onPress={() => {
           if (!animeQuery.data) return;
           const { animeImg, animeTitle, totalEpisodes } = animeQuery.data;
-          toggleFavourite({ animeId, animeImg, animeTitle, totalEpisodes });
+          toggleFavourite({
+            animeId,
+            animeImg,
+            animeTitle,
+            totalEpisodes,
+          });
         }}
       />
     );
@@ -146,7 +143,7 @@ export default function watch() {
     ),
     []
   );
-
+  console.log(episodeQuery.data?.sources?.[0].file);
   return (
     <View style={{ top }} className="flex-1">
       <View className="h-[200] max-h-[200] relative flex-1 ">
@@ -269,12 +266,7 @@ export default function watch() {
                 <Text className="font-bold color-violet-600">
                   {animeQuery.data?.type}
                 </Text>
-                <Text>
-                  {animeQuery.data?.otherNames
-                    .replaceAll("\n", "")
-                    .replaceAll(" ", "")
-                    .replaceAll("Status:", "")}
-                </Text>
+                <Text>{transformOtherNames(animeQuery.data?.otherNames)}</Text>
               </View>
             )}
           </Animated.View>
@@ -285,7 +277,6 @@ export default function watch() {
   );
 }
 
-const { width } = Dimensions.get("window");
 function ActionButton({ iconName, text, onPress }) {
   return (
     <TouchableOpacity
@@ -303,19 +294,5 @@ function ViedeoPlaceholder() {
     <View className="w-full h-full inset-0 bg-black flex-1 items-center justify-center">
       <ActivityIndicator size="large" color="#ffffff" />
     </View>
-  );
-}
-
-function SelectEpisode({ episodes, id }: { episodes: Episode2[]; id: string }) {
-  return (
-    <>
-      {episodes.map((e) => (
-        <EpisodeItem
-          isPlaying={id === e.episodeId}
-          key={e.episodeId}
-          episode={e}
-        />
-      ))}
-    </>
   );
 }

@@ -1,13 +1,13 @@
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import { AppSkeleton } from "@/components/atoms/AppSkeleton";
+import { LikeButton } from "@/components/atoms/LikeButton";
+import { BLUR_HASH } from "@/lib/constants";
 import { argsToMultiparams, substring } from "@/lib/string";
 import { Anime } from "@/lib/types/entities";
-import { AppSkeleton } from "@/components/atoms/AppSkeleton";
 import { Image } from "expo-image";
-import { BLUR_HASH } from "@/lib/constants";
-import Animated from "react-native-reanimated";
 import { router } from "expo-router";
-import { LikeButton } from "@/components/atoms/LikeButton";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import Animated from "react-native-reanimated";
 
 type TProps = {
   onPress: () => void;
@@ -72,21 +72,28 @@ export function AnimeItemSkeleton() {
   );
 }
 
-export const Item = (({ item }: { item: Anime }) => (
+export const Item = ({
+  item,
+  onPress,
+}: {
+  item: Anime;
+  onPress?: () => void;
+}) => (
   <Animated.View
     sharedTransitionTag={item.id}
     style={{ margin: 10, maxWidth: 160, width: 160 }}
   >
     <TouchableOpacity
-      onPress={() =>
+      onPress={() => {
+        onPress?.();
         router.push(
           `/animes/details/${argsToMultiparams(
             item.id,
             item.image,
             item.title
           )}`
-        )
-      }
+        );
+      }}
       className="flex-1 relative"
     >
       <LikeButton
@@ -111,7 +118,7 @@ export const Item = (({ item }: { item: Anime }) => (
       </View>
     </TouchableOpacity>
   </Animated.View>
-));
+);
 export const ItemSkeleton = React.memo(() => (
   <AppSkeleton style={{ margin: 10 }}>
     <View

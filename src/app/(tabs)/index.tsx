@@ -1,13 +1,13 @@
 import { AnimesSection } from "@/components/organisms/AnimeSection";
+import { AnimesSection2 } from "@/components/organisms/AnimeSection2";
 import { GenreList } from "@/components/organisms/GenreList";
 import { getAnimesByGenre, getMovies, getPopular } from "@/lib/api/animes";
-import { AntDesign } from "@expo/vector-icons";
-import { Link, router, useNavigation } from "expo-router";
-import React, { useLayoutEffect } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import Animated from "react-native-reanimated";
-import { AnimesSection2 } from "@/components/organisms/AnimeSection2";
 import { getRecentRelease2, getTopAiring2 } from "@/lib/api/animes2";
+import { AntDesign } from "@expo/vector-icons";
+import { router, useNavigation } from "expo-router";
+import React, { useLayoutEffect } from "react";
+import { ScrollView, TouchableOpacity, View } from "react-native";
+import Animated from "react-native-reanimated";
 
 export default function Page() {
   const navigation = useNavigation();

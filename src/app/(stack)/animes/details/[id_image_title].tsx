@@ -1,34 +1,34 @@
 import {
-  View,
+  EpisodeItem,
+  EpisodeItemSKeleton,
+} from "@/components/atoms/EpisodeListItem";
+import AnimeInfosHeader from "@/components/organisms/AnimeInfosHeader/AnimeInfosHeader";
+import { WithPlayerWaraper } from "@/components/organisms/PlayerModal";
+import { getANimeInfos2 } from "@/lib/api/animes2";
+import { WEB_APP_URL } from "@/lib/constants";
+import { useFavouritesStore } from "@/lib/store/useFavouritesStore";
+import usePlayerStatusStore from "@/lib/store/usePlayerStatusStore";
+import { useRecentsViewsStore } from "@/lib/store/useRecentsViewsStore";
+import { extractsArgs } from "@/lib/string";
+import { shareAnime } from "@/lib/utils";
+import { Ionicons } from "@expo/vector-icons";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import React, { useCallback, useLayoutEffect, useMemo, useState } from "react";
+import {
+  Dimensions,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  Dimensions,
-  Pressable,
+  View,
 } from "react-native";
-import React, { useCallback, useLayoutEffect, useMemo, useState } from "react";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import { BLUR_HASH, WEB_APP_URL } from "@/lib/constants";
-import { argsToMultiparams, extractsArgs, substring } from "@/lib/string";
 import Animated, {
   interpolate,
   useAnimatedRef,
   useAnimatedStyle,
   useScrollViewOffset,
 } from "react-native-reanimated";
-import { Image } from "expo-image";
-import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "react-query";
-import { getANimeInfos2 } from "@/lib/api/animes2";
-import { AppSkeleton } from "@/components/atoms/AppSkeleton";
-import { Episode2 } from "@/lib/types/entities2";
-import {
-  EpisodeItem,
-  EpisodeItemSKeleton,
-} from "@/components/atoms/EpisodeListItem";
-import { AnimeStore, useFavouritesStore } from "@/lib/store/useFavouritesStore";
-import { shareAnime } from "@/lib/utils";
-import { useRecentsViewsStore } from "@/lib/store/useRecentsViewsStore";
+
 
 export default function Page() {
   let { id_image_title } = useLocalSearchParams<{ id_image_title: string }>();
@@ -46,45 +46,16 @@ export default function Page() {
     queryKey: ["animes", id],
     queryFn: async () => await getANimeInfos2({ id }),
   });
-  const {
-    isFaourite,
-    toggleFavourite,
-    items: favourites,
-  } = useFavouritesStore();
+  const { items: favourites } = useFavouritesStore();
+  const {status, setStatus} = usePlayerStatusStore()
 
   const onShareAnime = useCallback(() => {
     shareAnime(`${WEB_APP_URL}/animes/details/${id_image_title}`);
   }, [id_image_title]);
 
-  function LikeButton() {
-    return (
-      <Pressable
-        className="overflow-hidden items-center justify-center bg-white w-[30] h-[30] z-[50]"
-        onPress={() => {
-          if (!animeQuery.data) return;
-          toggleFavourite({
-            animeId: id,
-            animeImg: animeQuery.data?.animeImg,
-            animeTitle: animeQuery.data?.animeTitle,
-            totalEpisodes: animeQuery.data?.totalEpisodes,
-          });
-        }}
-        style={{
-          borderRadius: 20,
-        }}
-      >
-        <Ionicons
-          name={isFaourite(id) ? "heart" : "heart-outline"}
-          text="Favourite"
-          size={22}
-        />
-      </Pressable>
-    );
-  }
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: "",
-      //   headerTransparent: true,
       headerBackground: () => (
         <Animated.View
           style={[
@@ -111,7 +82,6 @@ export default function Page() {
           >
             <Ionicons name="search-outline" size={22} color={"#000"} />
           </TouchableOpacity>
-          <LikeButton />
         </View>
       ),
       headerLeft: () => (
@@ -123,7 +93,7 @@ export default function Page() {
         </TouchableOpacity>
       ),
     });
-  }, [favourites]);
+  }, [favourites, status]);
 
   const scrollOffset = useScrollViewOffset(scrollRef);
 
@@ -166,174 +136,78 @@ export default function Page() {
   }, [Object.entries(items), id]);
 
   return (
-    <View className="flex-1">
-      <Animated.ScrollView
-        contentContainerStyle={{ paddingBottom: 105 }}
-        ref={scrollRef}
-        scrollEventThrottle={16}
-      >
-        <Animated.View
-          style={[{ height: IMG_HEIGHT, width }, imageAnimatedStyle]}
+    <WithPlayerWaraper>
+      <View className="flex-1">
+        <Animated.ScrollView
+          contentContainerStyle={{ paddingBottom: 105 }}
+          ref={scrollRef}
+          scrollEventThrottle={16}
         >
-          <Animated.View sharedTransitionTag={id} className="px-4">
-            <View className="max-w-full">
-              <View className="flex-row items-center gap-2">
-                <Image
-                  placeholder={BLUR_HASH}
-                  source={{
-                    uri: animeQuery.data?.animeImg || image,
-                  }}
-                  style={{
-                    width: 140,
-                    borderRadius: 5,
-                    height: 200,
-                  }}
-                />
-                <View className="flex-1">
-                  <Text className="text-[17px] font-bold w-full">
-                    {substring(animeQuery.data?.animeTitle || title, 55)}
-                  </Text>
-                  <View className="mt-3 gap-2 flex-1">
-                    {animeQuery.isLoading ? (
-                      <View className="gap-2">
-                        <DetailRowSkeleton />
-                        <DetailRowSkeleton />
-                        <DetailRowSkeleton />
-                        <DetailRowSkeleton />
-                        <DetailRowSkeleton />
-                      </View>
-                    ) : (
-                      <>
-                        <DetailRow label="Type" value={animeQuery.data?.type} />
-                        <DetailRow
-                          label="Status"
-                          value={animeQuery.data?.otherNames
-                            ?.replaceAll(" ", "")
-                            .replaceAll("\n", "")
-                            .replace("Status:", "")
-                            .trim()}
-                        />
-                        <DetailRow
-                          label="Genre"
-                          value={animeQuery.data?.releasedDate.replaceAll(
-                            "Genre:",
-                            ""
-                          )}
-                        />
-                        <DetailRow
-                          label="Episodes count"
-                          value={animeQuery.data?.totalEpisodes}
-                        />
-                      </>
-                    )}
-                  </View>
-                </View>
-              </View>
-              <View
-                style={{ height: IMG_HEIGHT - 200, alignItems: "center" }}
-                className="justify-center "
-              >
-                <View className="flex-row flex gap-1 flex-wrap items-start">
-                  {!!lastPlayEpisode && (
-                    <TouchableOpacity
-                      onPress={() => router.push(`/watch/${lastPlayEpisode}`)}
-                      className="bg-white p-2 rounded-lg flex-row items-center gap-2"
-                    >
-                      <Ionicons name={"pause"} color={"#000000"} size={20} />
-                      <Text className="font-bold">Continue</Text>
-                    </TouchableOpacity>
-                  )}
-
-                  <TouchableOpacity
-                    onPress={() => {
-                      if ((animeQuery.data?.episodesList.length || 0) > 0)
-                        router.push(
-                          `/watch/${
-                            reversed
-                              ? animeQuery.data?.episodesList.reverse()[0]
-                                  .episodeId
-                              : animeQuery.data?.episodesList[0]
-                                  .episodeId
-                          }`
-                        );
-                    }}
-                    className="bg-white p-2 rounded-lg flex-row items-center gap-2"
-                  >
-                    <Ionicons name={"play"} color={"#000000"} size={20} />
-                    <Text className="font-bold">Play</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Animated.View>
-        </Animated.View>
-        <View className="bg-white py-1 flex-row items-center gap-2 justify-between px-3">
-          <Text className="font-bold text-xl">Episodes list</Text>
-          <TouchableOpacity
-            onPress={() => setReversed((v) => !v)}
-            className="border-black border bg-white rounded-md py-1 px-2 flex-row gap-1 items-center"
+          <Animated.View
+            style={[{ height: IMG_HEIGHT, width }, imageAnimatedStyle]}
           >
-            <Text className="font-bold">A-Z</Text>
-            <Ionicons
-              name={reversed ? "arrow-up" : "arrow-down"}
-              size={18}
-              color={"#000"}
-            />
-          </TouchableOpacity>
-        </View>
-        <View className="bg-white px-3 gap-1">
-          {animeQuery.isLoading ? (
-            <>
-              {Array.from({ length: 40 }).map((_, i) => (
-                <EpisodeItemSKeleton key={i} />
-              ))}
-            </>
-          ) : (
-            <>
-              {reversed &&
-                animeQuery.data?.episodesList.map((e) => (
-                  <EpisodeItem key={e.episodeId} episode={e} />
+            <Animated.View sharedTransitionTag={id} className="px-4">
+              <AnimeInfosHeader
+                data={animeQuery.data}
+                defaultImage={image}
+                defaultTitle={title}
+                height={IMG_HEIGHT}
+                isLoading={animeQuery.isLoading}
+                lastPlayEpisode={lastPlayEpisode}
+              />
+            </Animated.View>
+          </Animated.View>
+          <View className="bg-white py-1 flex-row items-center gap-2 justify-between px-3">
+            <Text className="font-bold text-xl">Episodes list</Text>
+            <TouchableOpacity
+              onPress={() => setReversed((v) => !v)}
+              className="border-black border bg-white rounded-md py-1 px-2 flex-row gap-1 items-center"
+            >
+              <Text className="font-bold">A-Z</Text>
+              <Ionicons
+                name={reversed ? "arrow-up" : "arrow-down"}
+                size={18}
+                color={"#000"}
+              />
+            </TouchableOpacity>
+          </View>
+          <View className="bg-white px-3 gap-1">
+            {animeQuery.isLoading ? (
+              <>
+                {Array.from({ length: 40 }).map((_, i) => (
+                  <EpisodeItemSKeleton key={i} />
                 ))}
-
-              {!reversed &&
-                animeQuery.data?.episodesList
-                  .map((e) => (
+              </>
+            ) : (
+              <>
+                {reversed &&
+                  animeQuery.data?.episodesList.map((e) => (
                     <EpisodeItem
+                      anime={animeQuery.data}
                       key={e.episodeId}
                       episode={e}
-                      isPlaying={lastPlayEpisode == e.episodeId}
                     />
-                  ))
-                  .reverse()}
-            </>
-          )}
-        </View>
-      </Animated.ScrollView>
-    </View>
+                  ))}
+
+                {!reversed &&
+                  animeQuery.data?.episodesList
+                    .map((e) => (
+                      <EpisodeItem
+                        key={e.episodeId}
+                        anime={animeQuery.data}
+                        episode={e}
+                        isPlaying={lastPlayEpisode == e.episodeId}
+                      />
+                    ))
+                    .reverse()}
+              </>
+            )}
+          </View>
+        </Animated.ScrollView>
+      </View>
+    </WithPlayerWaraper>
   );
 }
 
 const IMG_HEIGHT = 270;
 const { width } = Dimensions.get("screen");
-
-function DetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <View className="flex-row gap-2 items-center flex-wrap max-w-full">
-      <View className="w-2 h-2 rounded-full bg-violet-600"></View>
-      <View className="flex-row flex-1">
-        <Text className="font-bold">{label}: </Text>
-        <Text className="font-bold text-violet-600 flex-1 flex-wrap ">
-          {value}
-        </Text>
-      </View>
-    </View>
-  );
-}
-
-function DetailRowSkeleton() {
-  return (
-    <AppSkeleton>
-      <View style={{ width: "100%", height: 15, borderRadius: 15 }} />
-    </AppSkeleton>
-  );
-}
