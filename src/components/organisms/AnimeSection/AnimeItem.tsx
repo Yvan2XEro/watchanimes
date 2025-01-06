@@ -1,12 +1,13 @@
 import { AppSkeleton } from "@/components/atoms/AppSkeleton";
 import { LikeButton } from "@/components/atoms/LikeButton";
+import { Text } from "@/components/ui/text";
 import { BLUR_HASH } from "@/lib/constants";
 import { argsToMultiparams, substring } from "@/lib/string";
 import { Anime } from "@/lib/types/entities";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import Animated from "react-native-reanimated";
 
 type TProps = {

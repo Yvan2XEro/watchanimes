@@ -1,14 +1,16 @@
 import React from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { DetailRowSkeleton } from "./DetailRowSkeleton";
 
+import { Text } from "@/components/ui/text";
 import { BLUR_HASH } from "@/lib/constants";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { useFavouritesStore } from "@/lib/store/useFavouritesStore";
+import usePlayerStatusStore from "@/lib/store/usePlayerStatusStore";
 import { substring, transformOtherNames } from "@/lib/string";
 import { Anime2 } from "@/lib/types/entities2";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { router } from "expo-router";
 import { DetailRow } from "./DetailRow";
 
 type TProps = {
@@ -30,6 +32,9 @@ export default function AnimeInfosHeader(props: TProps) {
     lastPlayEpisode,
   } = props;
   const { isFaourite, toggleFavourite } = useFavouritesStore();
+  const { playAnime } = usePlayerStatusStore();
+
+  const { text } = useThemeColor();
   return (
     <View className="max-w-full">
       <View className="flex-row items-center gap-2">
@@ -89,36 +94,40 @@ export default function AnimeInfosHeader(props: TProps) {
                 totalEpisodes: data.totalEpisodes,
               });
             }}
-            className="bg-white p-2 rounded-lg flex-row items-center gap-2"
+            className="bg-card p-2 rounded-lg flex-row items-center gap-2"
           >
             <Ionicons
               name={isFaourite(data?.animeId) ? "heart" : "heart-outline"}
-              color={"#000000"}
+              color={text}
               size={20}
             />
             <Text className="font-bold">Favourite</Text>
           </Pressable>
 
-          {!!lastPlayEpisode && (
+          {/* {!!lastPlayEpisode && (
             <Pressable
               onPress={() => router.push(`/watch/${lastPlayEpisode}`)}
-              className="bg-white p-2 rounded-lg flex-row items-center gap-2"
+              className="bg-card p-2 rounded-lg flex-row items-center gap-2"
             >
-              <Ionicons name={"pause"} color={"#000000"} size={20} />
+              <Ionicons name={"pause"} color={text} size={20} />
               <Text className="font-bold">
                 Continue [{lastPlayEpisode.split("episode-")[1]}]
               </Text>
             </Pressable>
-          )}
+          )} */}
 
           <Pressable
             onPress={() => {
               if ((data?.episodesList.length || 0) > 0)
-                router.push(`/watch/${data?.episodesList[0].episodeId}`);
+                playAnime({
+                  ...data,
+                  ...data?.episodesList[0],
+                });
+              // router.push(`/watch/${episode.episodeId}`);
             }}
-            className="bg-white p-2 rounded-lg flex-row items-center gap-2"
+            className="bg-card p-2 rounded-lg flex-row items-center gap-2"
           >
-            <Ionicons name={"play"} color={"#000000"} size={20} />
+            <Ionicons name={"play"} color={text} size={20} />
             <Text className="font-bold">Play</Text>
           </Pressable>
         </View>

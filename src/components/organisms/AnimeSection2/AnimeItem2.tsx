@@ -1,12 +1,13 @@
-import { Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
-import { substring } from "@/lib/string";
 import { AppSkeleton } from "@/components/atoms/AppSkeleton";
-import { Image } from "expo-image";
-import { BLUR_HASH } from "@/lib/constants";
-import Animated from "react-native-reanimated";
-import { Anime2 } from "@/lib/types/entities2";
 import { LikeButton } from "@/components/atoms/LikeButton";
+import { Text } from "@/components/ui/text";
+import { BLUR_HASH } from "@/lib/constants";
+import { substring } from "@/lib/string";
+import { Anime2 } from "@/lib/types/entities2";
+import { Image } from "expo-image";
+import React from "react";
+import { TouchableOpacity, View } from "react-native";
+import Animated from "react-native-reanimated";
 
 type TProps = {
   onPress: () => void;

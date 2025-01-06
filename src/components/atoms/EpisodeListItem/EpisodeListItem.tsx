@@ -1,11 +1,13 @@
+import { Text } from "@/components/ui/text";
 import { useAppBottomSheet } from "@/contexts/providers/app-bottom-sheet";
 import { PRIMARY } from "@/lib/constants";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import usePlayerStatusStore from "@/lib/store/usePlayerStatusStore";
 import { Anime2, Episode2 } from "@/lib/types/entities2";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "@gorhom/bottom-sheet";
 import React from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { AppSkeleton } from "../AppSkeleton";
 
 type TProps = {
@@ -16,6 +18,7 @@ type TProps = {
 export function EpisodeItem(props: TProps) {
   const { episode, isPlaying = false, anime } = props;
   const { playAnime } = usePlayerStatusStore();
+  const { text } = useThemeColor()
   
   const { dismissAppBottomSheet } = useAppBottomSheet();
   return (
@@ -54,7 +57,7 @@ export function EpisodeItem(props: TProps) {
             Episode {episode.episodeNum}
           </Text>
         </View>
-        <Ionicons name="chevron-forward" size={24} color={"#000"} />
+        <Ionicons name="chevron-forward" size={24} color={text} />
       </View>
     </TouchableOpacity>
   );

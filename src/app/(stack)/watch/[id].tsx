@@ -5,6 +5,7 @@ import {
 } from "@/components/atoms/EpisodeListItem";
 import { AnimesSection } from "@/components/organisms/AnimeSection";
 import { AnimesSection2 } from "@/components/organisms/AnimeSection2";
+import { Text } from "@/components/ui/text";
 import { useAppBottomSheet } from "@/contexts/providers/app-bottom-sheet";
 import { getPopular } from "@/lib/api/animes";
 import {
@@ -25,7 +26,7 @@ import { useKeepAwake } from "expo-keep-awake";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import VideoPlayer from "expo-video-player";
 import React, { useCallback, useLayoutEffect, useMemo } from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import Animated, {
   interpolate,
   useAnimatedRef,
@@ -219,7 +220,7 @@ export default function watch() {
         <Animated.ScrollView ref={scrollRef} style={{ flex: 1 }}>
           <Animated.View
             style={[animeViewStyle, { overflow: "hidden" }]}
-            className="flex-row items-center gap-1 bg-white px-2 "
+            className="flex-row items-center gap-1 bg-card px-2 "
           >
             <Image
               source={{ uri: animeQuery.data?.animeImg }}
@@ -281,9 +282,9 @@ function ActionButton({ iconName, text, onPress }) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className="bg-white p-2 rounded-lg flex-row items-center gap-2"
+      className="bg-card p-2 rounded-lg flex-row items-center gap-2"
     >
-      <Ionicons name={iconName} color={"#000000"} size={20} />
+      <Ionicons name={iconName} color={text} size={20} />
       <Text className="font-bold">{text}</Text>
     </TouchableOpacity>
   );

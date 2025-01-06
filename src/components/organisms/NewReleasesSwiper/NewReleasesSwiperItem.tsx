@@ -1,8 +1,8 @@
-import { Text, TouchableOpacity, Image } from "react-native";
-import React from "react";
+import { Text } from "@/components/ui/text";
 import { substring } from "@/lib/string";
-import { Link } from "expo-router";
 import { NewRelease } from "@/lib/types/entities";
+import React from "react";
+import { Image, TouchableOpacity } from "react-native";
 
 type TProps = {
   onPress: () => void;

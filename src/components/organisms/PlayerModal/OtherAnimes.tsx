@@ -71,7 +71,7 @@ export default function OtherAnimes() {
   }
 
   return (
-    <View className="bg-white flex-1 px-3">
+    <View className="bg-card flex-1 px-3">
       <RenderContent />
     </View>
   );

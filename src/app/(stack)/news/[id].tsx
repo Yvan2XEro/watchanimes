@@ -1,18 +1,18 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Share,
-  Image,
-  Dimensions,
-  StyleSheet,
-} from "react-native";
-import React, { useLayoutEffect } from "react";
-import { useLocalSearchParams, useNavigation } from "expo-router";
-import { SLASH_REPLACE } from "@/lib/constants";
-import { useQuery } from "react-query";
-import { getNewInfo } from "@/lib/api/news";
 import { AppLoader } from "@/components/atoms/AppLoader";
+import { Text } from "@/components/ui/text";
+import { getNewInfo } from "@/lib/api/news";
+import { SLASH_REPLACE } from "@/lib/constants";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useNavigation } from "expo-router";
+import React, { useLayoutEffect } from "react";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View
+} from "react-native";
 import Animated, {
   SlideInDown,
   interpolate,
@@ -20,7 +20,7 @@ import Animated, {
   useAnimatedStyle,
   useScrollViewOffset,
 } from "react-native-reanimated";
-import { Ionicons } from "@expo/vector-icons";
+import { useQuery } from "react-query";
 
 export default function Page() {
   let { id } = useLocalSearchParams<{ id: string }>();
@@ -32,6 +32,7 @@ export default function Page() {
   });
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
+  const { text, card } = useThemeColor()
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -40,27 +41,27 @@ export default function Page() {
       headerBackground: () => (
         <Animated.View
           style={[
-            { borderBottomWidth: StyleSheet.hairlineWidth ,height:100, backgroundColor: "#fff"},
+            { borderBottomWidth: StyleSheet.hairlineWidth ,height:100, backgroundColor: card},
             headerAnimatedStyle,
           ]}
         ></Animated.View>
       ),
       headerRight: () => (
         <View className="flex-row items-center gap-1">
-          <TouchableOpacity className="bg-white flex-row items-center justify-center h-[40] w-[40] rounded-[50]">
-            <Ionicons name="share-outline" size={22} color={"#000"} />
+          <TouchableOpacity className="bg-card flex-row items-center justify-center h-[40] w-[40] rounded-[50]">
+            <Ionicons name="share-outline" size={22} color={text} />
           </TouchableOpacity>
-          <TouchableOpacity className="bg-white flex-row items-center justify-center h-[40] w-[40] rounded-[50]">
-            <Ionicons name="heart-outline" size={22} color={"#000"} />
+          <TouchableOpacity className="bg-card flex-row items-center justify-center h-[40] w-[40] rounded-[50]">
+            <Ionicons name="heart-outline" size={22} color={text} />
           </TouchableOpacity>
         </View>
       ),
       headerLeft: () => (
         <TouchableOpacity
-          className="bg-white flex-row items-center justify-center h-[40] w-[40] rounded-[50]"
+          className="bg-card flex-row items-center justify-center h-[40] w-[40] rounded-[50]"
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="chevron-back" size={24} color={"#000"} />
+          <Ionicons name="chevron-back" size={24} color={text} />
         </TouchableOpacity>
       ),
     });
@@ -121,7 +122,7 @@ export default function Page() {
           resizeMode="cover"
         />
 
-        <View className="bg-white px-3">
+        <View className="bg-card px-3">
           <View>
             <Image
               source={{
@@ -142,7 +143,7 @@ export default function Page() {
       </Animated.ScrollView>
 
       <Animated.View
-        className="absolute h-[100] bottom-0 left-0 right-0 bg-white py-[10] px-[20]"
+        className="absolute h-[100] bottom-0 left-0 right-0 bg-card py-[10] px-[20]"
         style={{
           borderTopWidth: StyleSheet.hairlineWidth,
           borderTopColor: "gray",

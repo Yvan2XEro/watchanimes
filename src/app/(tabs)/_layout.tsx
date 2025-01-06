@@ -1,82 +1,124 @@
-import { Ionicons } from "@expo/vector-icons";
+import { HapticTab } from "@/components/atoms/HapticTab";
+import { DarkThemeSwitcher } from "@/components/organisms/DarkThemeSwitcher";
+import { Button } from "@/components/ui/button";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { Tabs } from "expo-router/tabs";
-import { Text, View } from "react-native";
+import { Platform, View } from "react-native";
+import Animated from "react-native-reanimated";
 
 export default function Layout() {
+  const { text, card, primary } = useThemeColor();
   return (
     <Tabs
       initialRouteName="index"
       screenOptions={{
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: "#000",
+        // tabBarShowLabel: false,
+        headerStyle: {
+          backgroundColor: card,
+        },
+
+        headerShadowVisible: false,
+        tabBarButton: HapticTab,
+        // tabBarBackground: BlurTabBarBackground,
+        tabBarActiveTintColor: primary,
+        tabBarInactiveTintColor: text,
+        tabBarStyle: [
+          Platform.select({
+            ios: {
+              // Use a transparent background on iOS to show the blur effect
+              position: "absolute",
+            },
+            default: {},
+          }),
+        ],
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon({ color, focused, size }) {
-            return (
-              <AppTabBarIcon
-                color={color}
-                focused={focused}
-                iconName="search-outline"
-                label="Brownse"
-              />
-            );
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIconWrapper
+              size={28}
+              name={focused ? "compass" : "compass-outline"}
+              color={color}
+              backgroundColor={focused ? "#7c3aed48" : undefined}
+            />
+          ),
+          headerStyle: {
+            // backgroundColor: PRIMARY
           },
+          headerRight: () => (
+            <View className="flex-row gap-3 items-center">
+              <Button size="icon"
+                // style={{ paddingRight: 8 }}
+                variant="ghost"
+                onPress={() => router.push("search")}
+              >
+                <Animated.View sharedTransitionTag="search">
+                  <AntDesign name="search1" size={24} color={primary} />
+                </Animated.View>
+              </Button>
+              <DarkThemeSwitcher />
+            </View>
+          ),
+          headerTitleStyle: {
+            color: primary,
+          },
+          headerTitle: "Hi Otaku!",
+          tabBarLabel: "Search",
+          title: "Search",
         }}
       />
       <Tabs.Screen
         name="recents"
         options={{
-          tabBarIcon({ color, focused, size }) {
-            return (
-              <AppTabBarIcon
-                color={color}
-                focused={focused}
-                iconName="time-outline"
-                label="Recents"
-              />
-            );
-          },
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIconWrapper
+              size={28}
+              color={color}
+              backgroundColor={focused ? "#7c3aed48" : undefined}
+              name={focused ? "time" : "time-outline"}
+            />
+          ),
+          tabBarLabel: "Recents",
+          title: "Recents",
         }}
       />
       <Tabs.Screen
         name="favourites"
         options={{
-          tabBarIcon({ color, focused, size }) {
+          tabBarIcon({ color, focused }) {
             return (
-              <AppTabBarIcon
+              <TabBarIconWrapper
+                size={28}
+                name={focused ? "heart" : "heart-outline"}
                 color={color}
-                focused={focused}
-                iconName="heart-outline"
-                label="Favourites"
+                backgroundColor={focused ? "#7c3aed48" : undefined}
               />
             );
           },
+          tabBarLabel: "Favourites",
+          title: "Favourites",
         }}
       />
     </Tabs>
   );
 }
 
-function AppTabBarIcon({ color, focused, iconName, label }) {
+function TabBarIconWrapper({ color, name, size, backgroundColor }) {
   return (
-    <View className="flex flex-col items-center flex-1 py-1">
-      <View
-        className={`${focused ? "bg-violet-600" : ""}`}
-        style={{
-          padding: 3,
-          paddingHorizontal: 15,
-          borderRadius: 15,
-          width: 50,
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Ionicons name={iconName} size={20} color={focused ? "#fff" : "#000"} />
-      </View>
-      {<Text style={{ fontSize: 12, color, flex: 1 }}>{label}</Text>}
+    <View
+      className="items-center justify-center rounded-[15]"
+      style={{
+        borderRadius: 15,
+        backgroundColor,
+        width: 40,
+        height: 30,
+      }}
+    >
+      <Ionicons {...{ color, name, size }} />
     </View>
   );
 }

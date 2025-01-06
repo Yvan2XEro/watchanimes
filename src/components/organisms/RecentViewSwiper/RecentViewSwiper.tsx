@@ -1,11 +1,12 @@
-import { View, Text } from "react-native";
-import React from "react";
-import { Link } from "expo-router";
-import { FlashList } from "@shopify/flash-list";
-import RecentSliderItem from "./RecentSliderItem";
-import { useQuery } from "react-query";
-import { getNews } from "@/lib/api/news";
+import { Text } from "@/components/ui/text";
+
 import { AppLoader } from "@/components/atoms/AppLoader";
+import { getNews } from "@/lib/api/news";
+import { FlashList } from "@shopify/flash-list";
+import React from "react";
+import { View } from "react-native";
+import { useQuery } from "react-query";
+import RecentSliderItem from "./RecentSliderItem";
 
 export default function RecentViewSwiper() {
   const newQuery = useQuery({

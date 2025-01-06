@@ -1,10 +1,10 @@
 import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
 import {
   // StateStorage,
   createJSONStorage,
   persist,
 } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
 // import { MMKV } from "react-native-mmkv";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -36,6 +36,7 @@ type State = {
 
 type Actions = {
   addToRecents: (item: AnimeRecentStore) => void;
+  clear: () => void;
 };
 
 export const useRecentsViewsStore = create<State & Actions>()(
@@ -49,6 +50,11 @@ export const useRecentsViewsStore = create<State & Actions>()(
             ...item,
             date,
           };
+        });
+      },
+      clear() {
+        set({
+          items: {},
         });
       },
     })),

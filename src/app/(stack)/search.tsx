@@ -1,5 +1,6 @@
 import { Item, ItemSkeleton } from "@/components/organisms/AnimeSection";
 import { searchAnimes } from "@/lib/api/animes";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { Anime } from "@/lib/types/entities";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "expo-router";
@@ -13,6 +14,7 @@ import {
 } from "react-native";
 import Animated from "react-native-reanimated";
 import { useInfiniteQuery } from "react-query";
+
 const { width } = Dimensions.get("window");
 
 export default function search() {
@@ -82,7 +84,7 @@ export default function search() {
   }
 
   return (
-    <View className="bg-white flex-1 px-3">
+    <View className="bg-card flex-1 px-3">
       <RenderContent />
     </View>
   );
@@ -94,13 +96,14 @@ type TProps = {
   onChange: (t: string) => void;
 };
 function AppSearchbar({ onGoback, onChange }: TProps) {
+  const { text } = useThemeColor()
   return (
     <View className="mt-[24] flex-row items-center p-1">
       <TouchableOpacity
-        className="bg-white flex-row items-center justify-center h-[40] w-[40] rounded-[50]"
+        className="bg-card flex-row items-center justify-center h-[40] w-[40] rounded-[50]"
         onPress={onGoback}
       >
-        <Ionicons name="chevron-back" size={24} color={"#000"} />
+        <Ionicons name="chevron-back" size={24} color={text} />
       </TouchableOpacity>
       <TextInput
         onChangeText={onChange}

@@ -1,6 +1,12 @@
-import { formatDistanceToNow, addWeeks, format } from "date-fns";
+import { addWeeks, formatDistanceToNow } from "date-fns";
 import { Share } from "react-native";
 
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 export const debounce = <F extends (...args: any[]) => any>(
   fn: F,
   delay: number
@@ -41,4 +47,17 @@ export function shareIpisode(url: string) {
     title: "I just found this amazing anime, try it too!",
     message: url
   })
+}
+
+export function shadowStyle(shadowColor = "#000", elevation = 3) {
+  return {
+    shadowColor,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.15,
+    shadowRadius: 3.62,
+    elevation,
+  };
 }

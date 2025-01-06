@@ -1,4 +1,5 @@
-import { Text, View } from "react-native";
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
 
 export function DetailRow({ label, value }: { label: string; value: string }) {
   return (

@@ -1,4 +1,6 @@
+import { Text } from "@/components/ui/text";
 import { BLUR_HASH } from "@/lib/constants";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { useRecentsViewsStore } from "@/lib/store/useRecentsViewsStore";
 import { argsToMultiparams, substring } from "@/lib/string";
 import { formatDate } from "@/lib/utils";
@@ -7,7 +9,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React from "react";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
+import { Pressable, TouchableOpacity, View } from "react-native";
 
 export default function Page() {
   return (
@@ -18,7 +20,9 @@ export default function Page() {
 }
 
 function Content() {
-  const { items } = useRecentsViewsStore();
+  const { items, clear } = useRecentsViewsStore();
+  const { text } = useThemeColor();
+  // const { playAnime } = usePlayerStatusStore();
 
   return (
     <View className="flex-1 px-3">
@@ -67,7 +71,7 @@ function Content() {
                     {substring(item.animeTitle, 45)}
                   </Text>
                   <View className="flex-row items-center gap-2">
-                    <Ionicons name="time-sharp" size={15} />
+                    <Ionicons name="time-sharp" size={15} color={text} />
                     <Text className="text-sm text-violet-600">
                       {formatDate(new Date(item.date))}
                     </Text>
@@ -78,10 +82,19 @@ function Content() {
                 </Pressable>
                 <View className="flex-row">
                   <TouchableOpacity
-                    onPress={() => router.push(`/watch/${item.episodeId}`)}
-                    className="bg-white p-2 rounded-lg flex-row items-center gap-2"
+                    // onPress={() => {
+                    
+                    //   playAnime({
+                    //     // ...anime,
+                    //     episodeId: item.episodeId,
+                    //     episodeNum: item.episodeId.split("-episode-")[1],
+                    //     episodeUrl: item.ep,
+                    //   });
+                    //   // router.push(`/watch/${episode.episodeId}`);
+                    // }}
+                    className="bg-card p-2 rounded-lg flex-row items-center gap-2"
                   >
-                    <Ionicons name={"play"} color={"#000000"} size={20} />
+                    <Ionicons name={"play"} color={text} size={20} />
                     <Text className="font-bold">Continue</Text>
                   </TouchableOpacity>
                 </View>

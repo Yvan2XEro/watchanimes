@@ -1,13 +1,14 @@
-import { View, Text } from "react-native";
-import React from "react";
-import { Link, router } from "expo-router";
-import { FlashList } from "@shopify/flash-list";
-import TopAiringSwiperItem from "./TopAiringSwiperItem";
-import { useQuery } from "react-query";
-import { getNews } from "@/lib/api/news";
+import { Text } from "@/components/ui/text";
+
 import { AppLoader } from "@/components/atoms/AppLoader";
-import { SLASH_REPLACE } from "@/lib/constants";
 import { getTopAiring } from "@/lib/api/animes";
+import { SLASH_REPLACE } from "@/lib/constants";
+import { FlashList } from "@shopify/flash-list";
+import { Link, router } from "expo-router";
+import React from "react";
+import { View } from "react-native";
+import { useQuery } from "react-query";
+import TopAiringSwiperItem from "./TopAiringSwiperItem";
 
 export default function TopAiringSwiper() {
   const newQuery = useQuery({

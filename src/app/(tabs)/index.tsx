@@ -3,38 +3,10 @@ import { AnimesSection2 } from "@/components/organisms/AnimeSection2";
 import { GenreList } from "@/components/organisms/GenreList";
 import { getAnimesByGenre, getMovies, getPopular } from "@/lib/api/animes";
 import { getRecentRelease2, getTopAiring2 } from "@/lib/api/animes2";
-import { AntDesign } from "@expo/vector-icons";
-import { router, useNavigation } from "expo-router";
-import React, { useLayoutEffect } from "react";
-import { ScrollView, TouchableOpacity, View } from "react-native";
-import Animated from "react-native-reanimated";
+import React from "react";
+import { ScrollView, View } from "react-native";
 
 export default function Page() {
-  const navigation = useNavigation();
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      // headerLeft: () => (
-      //   <View>
-      //     <Image
-      //       source={require("../assets/logo.png")}
-      //       style={{ width: 50, height: 50, borderRadius: 100 }}
-      //     />
-      //   </View>
-      // ),
-      headerRight: () => (
-        <TouchableOpacity
-          style={{ paddingRight: 8 }}
-          onPress={() => router.push("search")}
-        >
-          <Animated.View sharedTransitionTag="search">
-            <AntDesign name="search1" size={24} color="black" />
-          </Animated.View>
-        </TouchableOpacity>
-      ),
-      headerTitle: "Hi Otaku!",
-    });
-  }, []);
   return (
     <View className="flex flex-1">
       <GenreList />

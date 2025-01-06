@@ -1,35 +1,52 @@
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { useIsInsideTabNavigator } from "@/lib/hooks/useIsInsideTabNavigator";
+import { useThemeColor } from "@/lib/hooks/useThemeColor";
 import { useFavouritesStore } from "@/lib/store/useFavouritesStore";
 import usePlayerStatusStore from "@/lib/store/usePlayerStatusStore";
+import { shadowStyle } from "@/lib/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import React from "react";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
-import { Gesture } from "react-native-gesture-handler";
+import { usePathname } from "expo-router";
+
+import React, { useEffect } from "react";
+import {
+  Pressable,
+  useWindowDimensions,
+  View
+} from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  withSpring,
 } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function PlayerModal() {
   const { items } = useFavouritesStore();
 
+  const pathName = usePathname();
+
   const { status, playAnime, setAnime, currentPlaying, setStatus } =
     usePlayerStatusStore();
 
-  const translateY = useSharedValue(0);
+  const insets = useSafeAreaInsets();
+  const isInsideTab = useIsInsideTabNavigator();
+  const { height, width } = useWindowDimensions();
+  const bottom = useSharedValue(0);
+  const { text } = useThemeColor()
 
-  const animatedStyles = useAnimatedStyle(() => ({
-    top: 100 + translateY.value,
-  }));
-  const gestureHandler = Gesture.Pan()
-    .onStart(({ y }) => {
-      translateY.value -= y;
-    })
-    .onUpdate(({ translationY }) => {
-      translateY.value = translationY;
-    });
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      bottom: withSpring(bottom.value),
+    };
+  });
 
-  if (!currentPlaying || status=== "maximised") return null;
+  useEffect(() => {
+    bottom.value = isInsideTab ? insets.bottom + 49 + 10 : insets.bottom + 20;
+  }, [isInsideTab, insets.bottom]);
+
+  if (!currentPlaying || status === "maximised") return null;
 
   return (
     <Animated.View
@@ -37,49 +54,49 @@ export default function PlayerModal() {
         {
           position: "absolute",
           zIndex: 400,
-          left: 0,
-          right: 0,
-          bottom: 0,
+          left: 8,
+          right: 8,
+          maxWidth: width - 16,
         },
+        animatedStyle,
+        shadowStyle(text)
       ]}
-      className="bg-white"
+      className="bg-card rounded-md"
     >
-      <View className="flex flex-row">
+      <View className="flex flex-row w-full p-1">
         <Pressable
           onPress={() => setStatus("maximised")}
-          style={{ width: "35%", height: 65 }}
+          className="w-[35%] min-h-[65]"
         >
           <Image
             source={{ uri: currentPlaying?.animeImg }}
             style={{ width: "100%", height: "100%" }}
           />
         </Pressable>
-        <Pressable
-          onPress={() => setStatus("maximised")}
-          style={{ width: "40%", height: 65 }}
-          className="px-1"
-        >
-          <Text className="text-sm font-bold">{currentPlaying.animeTitle}</Text>
-          <Text className="text-lg">
-            Episode {currentPlaying.episodeNum}
-          </Text>
+        <Pressable onPress={() => setStatus("maximised")} className="px-1 w-[40%]">
+          <Text className="text-sm">{currentPlaying.animeTitle}</Text>
+          <Text className="text-xs text-primary">Episode {currentPlaying.episodeNum}</Text>
         </Pressable>
 
         <View className=" items-center justify-center" style={{ width: "25%" }}>
           <View className="flex flex-row items-center">
-            <TouchableOpacity
+            <Button
+              variant="ghost"
+              size="icon"
               onPress={() => playAnime(currentPlaying)}
               className="flex-1 items-center"
             >
-              <Ionicons name="pause-outline" size={30} />
+              <Ionicons name="pause-outline" size={30} color={text}  />
               {/* <Ionicons name="play-outline" size={30} /> */}
-            </TouchableOpacity>
-            <TouchableOpacity
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               onPress={() => setAnime(null)}
               className="flex-1 items-center"
             >
-              <Ionicons name="close-outline" size={30} />
-            </TouchableOpacity>
+              <Ionicons name="close-outline" size={30} color={text} />
+            </Button>
           </View>
         </View>
       </View>

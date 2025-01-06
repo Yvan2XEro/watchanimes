@@ -1,17 +1,17 @@
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import React, { PropsWithChildren } from "react";
-import AppQueryClient from "./providers/AppQueryClient";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { AppBottomSheetProvider } from "./providers/app-bottom-sheet";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import AppQueryClient from "./providers/AppQueryClient";
 
 export default function AppProviders({ children }: PropsWithChildren) {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <AppBottomSheetProvider>
-        <AppQueryClient>
+      <AppQueryClient>
+        <BottomSheetModalProvider>
           <SafeAreaProvider>{children}</SafeAreaProvider>
-        </AppQueryClient>
-      </AppBottomSheetProvider>
+        </BottomSheetModalProvider>
+      </AppQueryClient>
     </GestureHandlerRootView>
   );
 }

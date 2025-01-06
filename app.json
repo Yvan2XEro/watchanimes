@@ -8,13 +8,22 @@
       "output": "static",
       "bundler": "metro"
     },
+    "newArchEnabled": true,
     "plugins": [
       [
         "expo-router",
         {
           "origin": "https://n"
         }
-      ]
+      ],
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
+      ],
+      "expo-font"
     ],
     "splash": {
       "image": "./src/assets/splash.png",
@@ -35,10 +44,7 @@
               "pathPrefix": "/records"
             }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ],
       "package": "com.yvan_2x.Otaflix"
@@ -50,6 +56,9 @@
       "eas": {
         "projectId": "2759ddd8-d71d-4e23-8e44-169964690e57"
       }
+    },
+    "ios": {
+      "bundleIdentifier": "com.yvan-2x.Otaflix"
     }
   }
 }

@@ -1,12 +1,14 @@
-import { View, Text, Image, Dimensions, TouchableOpacity } from "react-native";
-import React, { useLayoutEffect } from "react";
+import { Text } from "@/components/ui/text";
 import { getNews } from "@/lib/api/news";
-import { useQuery } from "react-query";
-import { Link, router, useNavigation } from "expo-router";
-import { MasonryFlashList } from "@shopify/flash-list";
-import { NewRelease } from "@/lib/types/entities";
-import { BlurView } from "expo-blur";
 import { SLASH_REPLACE } from "@/lib/constants";
+import { NewRelease } from "@/lib/types/entities";
+import { MasonryFlashList } from "@shopify/flash-list";
+import { BlurView } from "expo-blur";
+import { router, useNavigation } from "expo-router";
+import React, { useLayoutEffect } from "react";
+import { Dimensions, Image, TouchableOpacity, View } from "react-native";
+import { useQuery } from "react-query";
+
 const { width } = Dimensions.get("window");
 const numColumns = Math.round(width / 390);
 
