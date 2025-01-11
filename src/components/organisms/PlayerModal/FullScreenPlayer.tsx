@@ -1,15 +1,15 @@
 import { AppSheetBackdrop } from "@/components/atoms/AppSheetBackdrop";
 import { Text } from "@/components/ui/text";
+import { useVideoProvider } from "@/contexts/providers/video-provider";
 import { getANimeInfos2, getEpisodeStreamingLink } from "@/lib/api/animes2";
 import { BLUR_HASH } from "@/lib/constants";
 import usePlayerStatusStore from "@/lib/store/usePlayerStatusStore";
-import { useRecentsViewsStore } from "@/lib/store/useRecentsViewsStore";
 import { substring } from "@/lib/string";
 import { BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { useTheme } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { useNavigation } from "expo-router";
-import { useVideoPlayer, VideoView } from "expo-video";
+import { VideoView } from "expo-video";
 import React, { useEffect, useMemo, useRef } from "react";
 import { BackHandler, useWindowDimensions, View } from "react-native";
 import { useQuery } from "react-query";
@@ -64,22 +64,7 @@ export default function FullScreenPlayer() {
       backHandler.remove();
     };
   }, [status]);
-  const { addToRecents } = useRecentsViewsStore();
-  const player = useVideoPlayer(
-    episodeQuery.data?.sources?.[0].file,
-    (player) => {
-      player.loop = true;
-      player.play();
-      if (currentPlaying)
-        addToRecents({
-          animeId,
-          animeImg: currentPlaying.animeImg,
-          animeTitle: currentPlaying.animeTitle,
-          episodeId: currentPlaying?.episodeId,
-          totalEpisodes: null,
-        });
-    }
-  );
+  const { player } = useVideoProvider();
   const OthersAnimes = useMemo(() => <OtherAnimes />, []);
 
   return (
