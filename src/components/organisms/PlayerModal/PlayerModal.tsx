@@ -76,7 +76,6 @@ export default function PlayerModal() {
             allowsFullscreen
             allowsPictureInPicture
           />
-          ;
         </Pressable>
         <Pressable
           onPress={() => setStatus("maximised")}
